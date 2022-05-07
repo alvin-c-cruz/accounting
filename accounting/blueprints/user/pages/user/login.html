@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% from 'macros.html' import string_field, submit_field %}
+
+{% block title %}User Login{% endblock %}
+
+{% block content %}
+<h1>Login</h1>
+<form action="{{ url_for('user.login') }}" method="post" class="form" role="form">
+    {{ form.csrf_token }}
+
+    {{ string_field(form.email) }}
+    {{ string_field(form.password) }}
+    {{ submit_field(form.submit) }}
+</form>
+{% endblock %}

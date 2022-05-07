@@ -1,0 +1,19 @@
+{% macro string_field(field) %}
+    <div class="form-group mt-2 mb-2 required">
+        {{ field.label(class="control-label") }}
+        {{ field(class="form-control", autocomplete="off") }}
+    </div>
+{% endmacro %}
+
+{% macro select_field(field) %}
+    <div class="form-group mt-2 mb-2 required">
+        {{ field.label(class="control-label") }}
+        {{ field(class="form-select") }}
+    </div>
+{% endmacro %}
+
+{% macro submit_field(field) %}
+    <div class="form-group mt-2 mb-2">
+        {{ field(class="btn btn-success") }}
+    </div>
+{% endmacro %}

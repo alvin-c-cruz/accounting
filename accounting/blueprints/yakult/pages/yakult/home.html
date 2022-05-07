@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import select_field, submit_field %}
+
+{% block title %}Yakult Dosage{% endblock %}
+
+{% block content %}
+<h1>Yakult Dosage</h1>
+<form action="{{ url_for('yakult.home') }}" method="post">
+    {{ form.csrf_token }}
+    {{ select_field(form.age_group) }}
+    {{ submit_field(form.submit) }}
+</form>
+
+{% endblock %}
