@@ -25,11 +25,11 @@ def register_soup(register_html):
 
 
 @pytest.fixture
-def admin_user():
+def new_user():
     data = {
-        "name": "Alvin",
-        "email": "alvinccruz12@gmail.com",
-        "password": "s1mplep@ssword"
+        "name": "New User",
+        "email": "new-user@gmail.com",
+        "password": "12345678"
     }
     return data
 
