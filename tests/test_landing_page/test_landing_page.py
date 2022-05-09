@@ -1,25 +1,19 @@
-from flask import url_for
+import pytest
 
 
-def test_landing_page_home(client):
-    assert client.get(url_for("landing_page.home")).status_code == 200
+@pytest.mark.landing_page
+class TestLandingPage:
+    @pytest.mark.smoke
+    @pytest.mark.user_logged_out
+    def test_landing_page_home(self, landing_page_html):
+        assert landing_page_html.status_code == 200
 
+    @pytest.mark.user_logged_out
+    def test_landing_page_home_has_register_link(self, landing_page_soup):
+        assert landing_page_soup.find("a", string="Register")
+        assert landing_page_soup.find("a", {"href": "/user/register"})
 
-def test_landing_page_home_has_register_text(client):
-    response = client.get(url_for("landing_page.home"))
-    assert "Register" in response.text
-
-
-def test_landing_page_home_has_register_link(client):
-    response = client.get(url_for("landing_page.home"))
-    assert url_for("user.register") in response.text
-
-
-def test_landing_page_home_has_login_text(client):
-    response = client.get(url_for("landing_page.home"))
-    assert "Log In" in response.text
-
-
-def test_landing_page_home_has_login_link(client):
-    response = client.get(url_for("landing_page.home"))
-    assert url_for("user.login") in response.text
+    @pytest.mark.user_logged_out
+    def test_landing_page_home_has_login_link(self, landing_page_soup):
+        assert landing_page_soup.find("a", string="Log In")
+        assert landing_page_soup.find("a", {"href": "/user/login"})

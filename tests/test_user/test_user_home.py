@@ -1,6 +1,3 @@
-from flask import url_for
-
-
-def test_user_home(client):
-    assert client.get(url_for("user.home")).status_code == 302
+def test_user_home(user_home_html):
+    assert user_home_html.status_code == 308
 
