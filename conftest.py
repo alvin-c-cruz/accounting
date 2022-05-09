@@ -2,7 +2,6 @@ import pytest
 from accounting import create_app
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def app():
-    app = create_app(test_config="test_config.py")
-    return app
+    return create_app(test_config="test_config.py")
