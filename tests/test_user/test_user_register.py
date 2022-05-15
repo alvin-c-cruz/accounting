@@ -1,5 +1,4 @@
 import pytest
-import json
 
 
 @pytest.mark.user
@@ -40,9 +39,20 @@ class TestUser:
             "email": new_user['email'],
             "password": new_user['password'],
             "confirm_password": new_user['password'],
-            # "follow_redirects": True,
+            "follow_redirects": True,
         }
         response = client.post('/user/register', data=data)
 
         assert response.status_code == 200
-        # assert b"This is the landing page." in response.data
+
+    @pytest.mark.smoke
+    @pytest.mark.user_logged_out
+    def test_user_login(self, client, new_user):
+        data = {
+            "email": new_user['email'],
+            "password": new_user['password'],
+            "follow_redirects": True,
+        }
+        response = client.post('/user/login', data=data)
+
+        assert response.status_code == 200
