@@ -34,13 +34,13 @@ class TestUser:
         assert register_soup.find('input', {"type": "submit"})
 
     @pytest.mark.user_logged_out
-    def test_user_create_new_user(self, client, new_user, init_database):
+    def test_user_create_new_user(self, client, new_user):
         data = {
             "name": new_user['name'],
             "email": new_user['email'],
             "password": new_user['password'],
             "confirm_password": new_user['password'],
-            "follow_redirects": True,
+            # "follow_redirects": True,
         }
         response = client.post('/user/register', data=data)
 

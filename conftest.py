@@ -13,20 +13,21 @@ def client():
 @pytest.fixture(scope='session')
 def init_database(client):
     # Create the database and the database table
-    db.create_all()
+    with client.application.app_context():
+        db.create_all()
 
-    # Insert user data
-    user = User(
-        email='alvinccruz12@gmail.com',
-        password='pbkdf2:sha256:260000$ISdjivpKYjrgigqr$f8ccc9f7e50649308158a7b015339187cc28243c6f66d436720c8f267cb9247a',
-        name="Alvin"
-    )
+        # Insert user data
+        user = User(
+            email='alvinccruz12@gmail.com',
+            password='pbkdf2:sha256:260000$ISdjivpKYjrgigqr$f8ccc9f7e50649308158a7b015339187cc28243c6f66d436720c8f267cb9247a',
+            name="Alvin"
+        )
 
-    db.session.add(user)
+        db.session.add(user)
 
-    # Commit the changes for the users
-    db.session.commit()
+        # Commit the changes for the users
+        db.session.commit()
 
-    yield db  # this is where the testing happens!
+        yield db  # this is where the testing happens!
 
-    db.drop_all()
+        db.drop_all()
