@@ -3,8 +3,8 @@ from bs4 import BeautifulSoup
 
 
 @pytest.fixture
-def landing_page_html(client):
-    return client.get("/")
+def landing_page_html(test_client):
+    return test_client.get("/")
 
 
 @pytest.fixture

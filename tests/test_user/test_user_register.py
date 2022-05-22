@@ -2,7 +2,7 @@ import pytest
 
 
 @pytest.mark.user
-class TestUser:
+class TestUserRegister:
     @pytest.mark.smoke
     @pytest.mark.user_logged_out
     def test_user_register(self, register_html):
@@ -33,7 +33,7 @@ class TestUser:
         assert register_soup.find('input', {"type": "submit"})
 
     @pytest.mark.user_logged_out
-    def test_user_create_new_user(self, client, new_user):
+    def test_user_create_new_user(self, test_client, new_user):
         data = {
             "name": new_user['name'],
             "email": new_user['email'],
@@ -41,18 +41,7 @@ class TestUser:
             "confirm_password": new_user['password'],
             "follow_redirects": True,
         }
-        response = client.post('/user/register', data=data)
+        response = test_client.post('/user/register', data=data)
 
         assert response.status_code == 200
 
-    @pytest.mark.smoke
-    @pytest.mark.user_logged_out
-    def test_user_login(self, client, new_user):
-        data = {
-            "email": new_user['email'],
-            "password": new_user['password'],
-            "follow_redirects": True,
-        }
-        response = client.post('/user/login', data=data)
-
-        assert response.status_code == 200

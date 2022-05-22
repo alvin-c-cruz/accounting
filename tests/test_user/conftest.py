@@ -5,8 +5,8 @@ from accounting.blueprints import user
 
 
 @pytest.fixture
-def user_home_html(client):
-    return client.get("/user")
+def user_home_html(test_client):
+    return test_client.get("/user")
 
 
 @pytest.fixture
@@ -15,13 +15,23 @@ def user_home_soup(user_home_html):
 
 
 @pytest.fixture
-def register_html(client):
-    return client.get("/user/register")
+def register_html(test_client):
+    return test_client.get("/user/register")
 
 
 @pytest.fixture
 def register_soup(register_html):
     return BeautifulSoup(register_html.text, 'html.parser')
+
+
+@pytest.fixture
+def login_html(test_client):
+    return test_client.get("/user/login")
+
+
+@pytest.fixture
+def login_soup(login_html):
+    return BeautifulSoup(login_html.text, 'html.parser')
 
 
 @pytest.fixture

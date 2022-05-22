@@ -19,4 +19,4 @@ class UserForm(FlaskForm):
 class LoginForm(FlaskForm):
     email = EmailField(label="Email", validators=[DataRequired(), Email()], render_kw={"autocomplete": "off"})
     password = PasswordField(label="Password", validators=[DataRequired(), Length(min=8)])
-    submit = SubmitField(label="Login", render_kw={"class_": "btn btn-success"})
+    submit = SubmitField(label="Log In", render_kw={"class_": "btn btn-success"})
