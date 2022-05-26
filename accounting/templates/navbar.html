@@ -15,16 +15,8 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
         {% if current_user.is_authenticated %}
-            <div class="navbar-nav">
-                <a class="nav-link text-white" href="#">Real Features</a>
-            </div>
-            <div class="navbar-nav justify-content-end">
-                <a class="nav-link text-white" href="#">Real Features</a>
-            </div>
+            {% include 'navbar_authenticated.html' %}
         {% else %}
-            <div class="navbar-nav">
-                <a class="nav-link text-white" href="{{ url_for('yakult.home') }}">Yakult Dosage</a>
-            </div>
             <div class="navbar-nav justify-content-end">
                 <a class="nav-link text-white" href="#">Sample Features</a>
             </div>
@@ -50,6 +42,9 @@
                 <a class="nav-link text-white" href="{{ url_for('user.register') }}">Register</a>
             </div>
             {% endif %}
+            <div class="navbar-nav">
+                <a class="nav-link text-white" href="{{ url_for('transition.home') }}">Transition</a>
+            </div>
         </div>
     </div>
 </nav>

@@ -17,3 +17,15 @@
         {{ field(class="btn btn-success") }}
     </div>
 {% endmacro %}
+
+{% macro add_btn(route, text) %}
+   <a href="{{ url_for(route) }}" class="btn btn-success">{{ text }}</a>
+{% endmacro %}
+
+{% macro edit_btn(route, id) %}
+   <a href="{{ url_for(route, id=id) }}" class="btn btn-success">Edit</a>
+{% endmacro %}
+
+{% macro delete_btn(route, id) %}
+   <a href="{{ url_for(route, id=id) }}" class="btn btn-danger">Delete</a>
+{% endmacro %}

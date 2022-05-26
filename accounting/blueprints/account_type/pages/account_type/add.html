@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% from "macros.html" import string_field, select_field, submit_field, add_btn %}
+
+{% block title %}Add Account Type{% endblock %}
+
+{% block content %}
+<h1>Add Account Type</h1>
+<form action="{{ url_for('account_type.add') }}" method="post" class="form">
+    {{ form.csrf_token }}
+    {{ string_field(form.account_type) }}
+    {{ select_field(form.classification) }}
+    {{ string_field(form.priority) }}
+    {{ submit_field(form.submit) }}
+</form>
+{% endblock %}

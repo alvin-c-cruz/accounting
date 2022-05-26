@@ -1,0 +1,28 @@
+<div class="navbar-nav">
+    <a class="nav-link text-white" href="{{ url_for('landing_page.home') }}">Home</a>
+</div>
+<div class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownMenuLink" role="button"
+       data-bs-toggle="dropdown" aria-expanded="false">
+        Options
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+        <li><a class="dropdown-item" href="{{ url_for('account_type.home') }}">Chart of Accounts</a></li>
+        <li><a class="dropdown-item" href="#">Customers</a></li>
+        <li><a class="dropdown-item" href="#">Vendors</a></li>
+    </ul>
+</div>
+{% if current_user.admin %}
+<div class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown"
+       aria-expanded="false">
+        Admin Only
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+        <li><a class="dropdown-item" href="#">Action</a></li>
+        <li><a class="dropdown-item" href="#">Another action</a></li>
+        <li><a class="dropdown-item" href="#">Something else here</a></li>
+    </ul>
+</div>
+
+{% endif %}

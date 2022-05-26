@@ -1,5 +1,5 @@
 import os
-from flask import Flask,redirect, url_for, abort, request
+from flask import Flask,  redirect, url_for, abort, request
 from flask_login import LoginManager
 from http import HTTPStatus
 from flask_sqlalchemy import SQLAlchemy
@@ -23,7 +23,6 @@ def create_app(test_config=None):
         app.config.from_pyfile(os.path.join(app.instance_path, test_config))
         app.config ['SQLALCHEMY_DATABASE_URI'] = "sqlite:///" + os.path.join(app.instance_path, "data.db")
         app.config ['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-        print(test_config)
 
     if not os.path.isdir(app.instance_path):
         os.makedirs(app.instance_path)

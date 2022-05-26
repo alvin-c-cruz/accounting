@@ -36,10 +36,9 @@ def register():
                 email=email,
                 name=name,
                 password=generate_password_hash(password=password, method="pbkdf2:sha256", salt_length=16),
-                registered_on=datetime.now(),
+                registered_on=datetime.now()
             )
-            db.session.add(user)
-            db.session.commit()
+            user.save_and_commit()
 
             # send_confirmation_email(email)
 
@@ -52,7 +51,7 @@ def register():
     return render_template("user/register.html", form=form)
 
 
-@bp.route("/login", methods=[ "GET", "POST" ])
+@bp.route("/login", methods=["GET", "POST"])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
