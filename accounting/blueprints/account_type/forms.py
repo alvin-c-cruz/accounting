@@ -11,5 +11,5 @@ class AccountTypeForm(FlaskForm):
         validators=[DataRequired()],
         choices=AccountType.classification_choices()
     )
-    priority = StringField(label="Order", validators=[DataRequired()])
+    prefix = StringField(label="Prefix", validators=[DataRequired()])
     submit = SubmitField(label="Save")

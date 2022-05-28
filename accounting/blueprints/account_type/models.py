@@ -7,7 +7,7 @@ class AccountType(db.Model, DataModel):
 
     account_type = db.Column(db.String(64), unique=True, nullable=False)
     classification = db.Column(db.String(8), nullable=False)
-    priority = db.Column(db.Integer, nullable=False)
+    prefix = db.Column(db.String(8), nullable=False)
 
     def __repr__(self):
         return self.account_type

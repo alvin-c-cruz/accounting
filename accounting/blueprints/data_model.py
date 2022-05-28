@@ -1,5 +1,7 @@
 from accounting import db
-
+import os
+import json
+from flask import current_app
 
 class DataModel:
     id = db.Column(db.Integer, primary_key=True)
@@ -28,3 +30,24 @@ class DataModel:
             if column == 'id':
                 continue
             setattr(self, column, getattr(form, column).data)
+
+    def export(self, id=None):
+        if id:
+            data = [getattr(self, "query").get(id)]
+        else:
+            data = getattr(self, "query").all()
+
+        data_list = []
+        columns = self.__table__.columns.keys()
+        for obj in data:
+            data_list.append(
+                { column: getattr(obj, column) for column in columns }
+            )
+
+        with current_app.app_context():
+            filename = os.path.join(current_app.instance_path, "account_type.json")
+
+        with open(filename, "w+") as f:
+            json.dump(data_list, f)
+
+        return filename
