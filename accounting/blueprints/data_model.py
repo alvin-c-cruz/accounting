@@ -32,6 +32,7 @@ class DataModel:
             setattr(self, column, getattr(form, column).data)
 
     def export(self, id=None):
+
         if id:
             data = [getattr(self, "query").get(id)]
         else:
@@ -45,7 +46,11 @@ class DataModel:
             )
 
         with current_app.app_context():
-            filename = os.path.join(current_app.instance_path, "account_type.json")
+            list_files = os.listdir(os.path.join(current_app.instance_path, "temp"))
+            for file in list_files:
+                os.remove(os.path.join(current_app.instance_path, "temp", file))
+
+            filename = os.path.join(current_app.instance_path, "temp", "account_type.json")
 
         with open(filename, "w+") as f:
             json.dump(data_list, f)
