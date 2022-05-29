@@ -57,7 +57,7 @@ class DataModel:
             filename = os.path.join(current_app.instance_path, "temp", f"{self.__tablename__}.json")
 
         with open(filename, "w+") as f:
-            json.dump(data_list, f)
+            json.dump(data_list, f, indent=4)
 
         return filename
 

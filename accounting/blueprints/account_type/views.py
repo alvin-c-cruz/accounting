@@ -8,10 +8,10 @@ from .forms import AccountTypeForm
 bp = Blueprint("account_type", __name__, template_folder="pages", url_prefix="/account_type")
 
 
-@bp.route("/")
+@bp.route("/<int:page>")
 @login_required
-def home():
-    account_types = AccountType.query.order_by(AccountType.prefix).all()
+def home(page):
+    account_types = AccountType.query.order_by(AccountType.prefix).paginate(page=page, per_page=5)
     return render_template("account_type/home.html", account_types=account_types)
 
 
@@ -24,7 +24,7 @@ def add():
         new_data.data(form)
         new_data.save_and_commit()
         flash(f"Added {new_data}", category="success")
-        return redirect(url_for("account_type.home"))
+        return redirect(url_for("account_type.home", page=1))
     return render_template("account_type/add.html", form=form)
 
 
@@ -37,7 +37,7 @@ def edit(id):
         data_to_edit.data(form)
         data_to_edit.save_and_commit()
         flash(f"Edited {data_to_edit}", category="success")
-        return redirect(url_for("account_type.home"))
+        return redirect(url_for("account_type.home", page=1))
     return render_template("account_type/edit.html", form=form, id=id)
 
 
@@ -47,7 +47,7 @@ def delete(id):
     data_to_delete = AccountType.query.get(id)
     data_to_delete.delete_and_commit()
     flash(f"Deleted {data_to_delete}", category="success")
-    return redirect(url_for("account_type.home"))
+    return redirect(url_for("account_type.home", page=1))
 
 
 @bp.route("/export")

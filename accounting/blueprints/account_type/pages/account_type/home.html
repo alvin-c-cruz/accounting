@@ -19,7 +19,7 @@
         <td colspan="4" class="text-center">No record found.</td>
     </tr>
     {% else %}
-        {% for account_type in account_types %}
+        {% for account_type in account_types.items %}
     <tr>
         <td>{{ account_type.account_type }}</td>
         <td>{{ account_type.classification }}</td>
@@ -32,4 +32,38 @@
         {% endfor %}
     {% endif %}
 </table>
+
+<nav aria-label="Page navigation example">
+  <ul class="pagination">
+      {% if account_types.has_prev %}
+    <li class="page-item">
+      <a class="page-link" href="{{ url_for('account_type.home', page=account_types.prev_num) }}" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+      </a>
+    </li>
+      {% endif %}
+    {% for page in account_types.iter_pages() %}
+        {% if page %}
+            {% if page != account_types.page %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for('account_type.home', page=page) }}">{{ page }}</a>
+        </li>
+            {% else %}
+        <li class="page-item active">
+            <a class="page-link" href="#">{{ page }}</a>
+        </li>
+            {% endif %}
+        {% else %}
+        <li class="page-item">...</li>
+        {% endif %}
+    {% endfor %}
+      {% if account_types.has_next %}
+    <li class="page-item">
+      <a class="page-link" href="{{ url_for('account_type.home', page=account_types.next_num) }}" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+      </a>
+    </li>
+      {% endif %}
+  </ul>
+</nav>
 {% endblock %}
