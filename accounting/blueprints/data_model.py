@@ -3,6 +3,7 @@ import os
 import json
 from flask import current_app
 
+
 class DataModel:
     id = db.Column(db.Integer, primary_key=True)
 
@@ -15,6 +16,10 @@ class DataModel:
 
     def delete(self):
         db.session.delete(self)
+
+    def delete_all(self):
+        getattr(self, "query").delete()
+        db.session.commit()
 
     def save_and_commit(self):
         self.save()
@@ -32,7 +37,6 @@ class DataModel:
             setattr(self, column, getattr(form, column).data)
 
     def export(self, id=None):
-
         if id:
             data = [getattr(self, "query").get(id)]
         else:
@@ -50,9 +54,11 @@ class DataModel:
             for file in list_files:
                 os.remove(os.path.join(current_app.instance_path, "temp", file))
 
-            filename = os.path.join(current_app.instance_path, "temp", "account_type.json")
+            filename = os.path.join(current_app.instance_path, "temp", f"{self.__tablename__}.json")
 
         with open(filename, "w+") as f:
             json.dump(data_list, f)
 
         return filename
+
+
