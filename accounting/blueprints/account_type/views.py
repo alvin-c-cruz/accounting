@@ -11,7 +11,7 @@ bp = Blueprint("account_type", __name__, template_folder="pages", url_prefix="/a
 @bp.route("/<int:page>")
 @login_required
 def home(page):
-    account_types = AccountType.query.order_by(AccountType.prefix).paginate(page=page, per_page=5)
+    account_types = AccountType.query.order_by(AccountType.prefix).paginate(page=page, per_page=10)
     return render_template("account_type/home.html", account_types=account_types)
 
 
