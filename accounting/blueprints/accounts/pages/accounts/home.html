@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% from "macros.html" import add_btn, edit_btn, delete_btn, render_pagination %}
+
+{% block title %}Chart of Accounts{% endblock %}
+
+{% block content %}
+<h1>Chart of Accounts</h1>
+{{ add_btn("accounts.add", "Add Account") }}
+{{ add_btn("accounts.export", "Export") }}
+<table class="table table-striped table-dark">
+    <tr>
+        <th>Account Number</th>
+        <th>Account Title</th>
+        <th>Account Type</th>
+        <th>Actions</th>
+    </tr>
+    {% if not accounts %}
+    <tr>
+        <td colspan="4" class="text-center">No record found.</td>
+    </tr>
+    {% else %}
+        {% for account in accounts.items %}
+    <tr>
+        <td>{{ account.account_type_id }}{{ account.account_number }}</td>
+        <td>{{ account.account_title }}</td>
+        <td>{{ account.account_type_id.account_type }}</td>
+        <td>
+            {{ edit_btn("accounts.edit", account.id) }}
+            {{ delete_btn("accounts.delete", account.id) }}
+        </td>
+    </tr>
+        {% endfor %}
+    {% endif %}
+</table>
+{{ render_pagination(accounts, "accounts.home") }}
+{% endblock %}

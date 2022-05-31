@@ -1,6 +1,6 @@
 import os
 import json
-from flask import Blueprint, render_template, redirect, url_for, flash, send_file, current_app
+from flask import Blueprint, render_template, redirect, url_for, flash, send_file
 from flask_login import login_required
 from .models import AccountType
 from .forms import AccountTypeForm
@@ -11,7 +11,7 @@ bp = Blueprint("account_type", __name__, template_folder="pages", url_prefix="/a
 @bp.route("/<int:page>")
 @login_required
 def home(page):
-    account_types = AccountType.query.order_by(AccountType.prefix).paginate(page=page, per_page=10)
+    account_types = AccountType.query.order_by(AccountType.priority).paginate(page=page, per_page=10)
     return render_template("account_type/home.html", account_types=account_types)
 
 
@@ -54,6 +54,5 @@ def delete(id):
 @login_required
 def export():
     filename = AccountType().export()
-
     return send_file('{}'.format(filename), as_attachment=True, cache_timeout=0)
 

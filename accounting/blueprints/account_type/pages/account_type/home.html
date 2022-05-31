@@ -11,7 +11,7 @@
     <tr>
         <th>Description</th>
         <th>Classification</th>
-        <th>Prefix</th>
+        <th>Order</th>
         <th>Action</th>
     </tr>
     {% if not account_types %}
@@ -23,7 +23,7 @@
     <tr>
         <td>{{ account_type.account_type }}</td>
         <td>{{ account_type.classification }}</td>
-        <td>{{ account_type.prefix }}</td>
+        <td>{{ account_type.priority }}</td>
         <td>
             {{ edit_btn("account_type.edit", account_type.id) }}
             {{ delete_btn("account_type.delete", account_type.id) }}
@@ -32,7 +32,5 @@
         {% endfor %}
     {% endif %}
 </table>
-
 {{ render_pagination(account_types, "account_type.home") }}
-
 {% endblock %}
