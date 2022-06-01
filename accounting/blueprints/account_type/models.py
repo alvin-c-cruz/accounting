@@ -1,3 +1,4 @@
+from flask import current_app
 from accounting import db
 from .. data_model import DataModel
 
@@ -11,11 +12,6 @@ class AccountType(db.Model, DataModel):
 
     def __repr__(self):
         return self.account_type
-
-    def choices(self):
-        data = db.query(self).order_by(self.priority).all()
-        data.insert(0, "")
-        return data
 
     @staticmethod
     def classification_choices():

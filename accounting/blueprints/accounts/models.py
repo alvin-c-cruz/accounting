@@ -13,8 +13,3 @@ class Accounts(db.Model, DataModel):
 
     def __repr__(self):
         return f"{self.account_number}: {self.account_title}"
-
-    def choices(self):
-        data = db.query(self).order_by(self.account_number).all()
-        data.insert(0, "")
-        return data

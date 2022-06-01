@@ -4,13 +4,17 @@ from datetime import datetime
 import os
 import json
 
+from .. account_type import AccountType
+from .. accounts import Accounts
+
 bp = Blueprint('transition', __name__, url_prefix="/transition")
 
 
 @bp.route("/")
 def home():
     default_user()
-    reload_account_types()
+    reload(AccountType)
+    reload(Accounts)
     flash("Data reloaded.", category="success")
     return redirect(url_for("landing_page.home"))
 
@@ -37,20 +41,19 @@ def default_user():
     login_user(new_user)
 
 
-def reload_account_types():
-    from .. account_type import AccountType
-
-    AccountType().delete_all()
+def reload(obj):
+    obj().delete_all()
 
     with current_app.app_context():
-        filename = os.path.join(current_app.instance_path, "uploads", f"{AccountType.__tablename__}.json")
+        filename = os.path.join(current_app.instance_path, "uploads", f"{obj.__tablename__}.json")
 
     with open(filename, "r") as f:
         json_data = json.load(f)
 
     for row in json_data:
-        new_data = AccountType()
+        new_data = obj()
         for key, value in row.items():
             if key != "id":
                 setattr(new_data, key, value)
         new_data.save_and_commit()
+
