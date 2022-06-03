@@ -33,15 +33,27 @@
 {% endmacro %}
 
 {% macro add_btn(route, text) %}
-   <a href="{{ url_for(route) }}" class="btn btn-success">{{ text }}</a>
+   <a href="{{ url_for(route) }}" class="btn btn-success mt-2 mb-2">{{ text }}</a>
 {% endmacro %}
 
 {% macro edit_btn(route, id) %}
-   <a href="{{ url_for(route, id=id) }}" class="btn btn-success">Edit</a>
+   <a href="{{ url_for(route, id=id) }}" class="btn btn-success mt-2 mb-2">Edit</a>
 {% endmacro %}
 
 {% macro delete_btn(route, id) %}
-   <a href="{{ url_for(route, id=id) }}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this item')">Delete</a>
+   <a href="{{ url_for(route, id=id) }}" class="btn btn-danger mt-2 mb-2" onclick="return confirm('Are you sure you want to delete this item')">Delete</a>
+{% endmacro %}
+
+{% macro entry_string_field(field, required=False) %}
+    <div class="form-group mt-2 mb-2 {% if required %}required{% endif %}">
+        {{ field(class="form-control", autocomplete="off") }}
+    </div>
+{% endmacro %}
+
+{% macro entry_select_field(field, required=False) %}
+    <div class="form-group mt-2 mb-2 {% if required %}required{% endif %}">
+        {{ field(class="form-select") }}
+    </div>
 {% endmacro %}
 
 {% macro render_pagination(pagination, endpoint) %}

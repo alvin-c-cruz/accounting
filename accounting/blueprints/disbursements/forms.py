@@ -1,6 +1,13 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, DateField, TextAreaField, SelectField, SubmitField
+from wtforms import StringField, DateField, TextAreaField, SelectField, SubmitField, FormField, FieldList
 from wtforms.validators import DataRequired
+
+
+class DisbursementsEntryForm(FlaskForm):
+    account_id = SelectField(label="Account Title", validators=[DataRequired()])
+    debit = StringField(label="Debit", default="0.00")
+    credit = StringField(label="Debit", default="0.00")
+    notes = StringField(label="Notes")
 
 
 class DisbursementsForm(FlaskForm):
@@ -11,4 +18,8 @@ class DisbursementsForm(FlaskForm):
     notes = TextAreaField(label="Description")
     vendor_id = SelectField(label="Vendor", validators=[DataRequired()])
 
+    entries = FieldList(FormField(DisbursementsEntryForm), min_entries=10)
+
     submit = SubmitField(label="Save")
+
+

@@ -13,3 +13,5 @@ class AccountTypeForm(FlaskForm):
     )
     priority = StringField(label="Order", validators=[DataRequired()])
     submit = SubmitField(label="Save")
+
+

@@ -23,3 +23,21 @@ class Disbursements(db.Model, DataModel):
 
     def __repr__(self):
         return f"{self.disbursement_number}: {self.vendor_id}"
+
+
+class DisbursementsEntry(db.Model, DataModel):
+    __tablename__ = "tbl_disbursements_entry"
+
+    disbursement_id = db.Column(db.Integer, db.ForeignKey("tbl_disbursements.id"), nullable=False)
+    disbursement = db.relationship("Disbursements", backref=db.backref(__tablename__, lazy=True))
+
+    account_id = db.Column(db.Integer, db.ForeignKey("tbl_accounts.id"), nullable=False)
+    account = db.relationship("Accounts", backref=db.backref(__tablename__, lazy=True))
+
+    debit = db.Column(db.Float, default="0.0")
+    credit = db.Column(db.Float, default="0.0")
+
+    notes = db.Column(db.String(255), nullable=False)
+
+    def __repr__(self):
+        return f"{self.disbursement} - {self.account_id}: {self.debit - self.credit}"

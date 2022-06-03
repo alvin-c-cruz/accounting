@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "macros.html" import string_field, date_field, textarea_field, select_field, submit_field, add_btn %}
+{% from "macros.html" import string_field, select_field, date_field, textarea_field, entry_string_field, entry_select_field, submit_field, delete_btn %}
 
 {% block title %}{{ obj.page_title }}{% endblock %}
 
@@ -25,6 +25,28 @@
         </div>
     </div>
     {{ textarea_field(form.notes) }}
+
+    <table class="table table-striped">
+        <tr>
+            <th>Account Title</th>
+            <th>Debit</th>
+            <th>Credit</th>
+            <th>Notes</th>
+            <th>Actions</th>
+        </tr>
+    {% for entry in form.entries %}
+        <tr>
+            <td>{{ entry_select_field(entry.account_id) }}</td>
+            <td>{{ entry_string_field(entry.debit) }}</td>
+            <td>{{ entry_string_field(entry.credit) }}</td>
+            <td>{{ entry_string_field(entry.notes) }}</td>
+            <td>
+                <a href="#" class="btn btn-danger mt-2 mb-2">-</a>
+            </td>
+        </tr>
+    {% endfor %}
+    </table>
+
     {{ submit_field(form.submit) }}
 </form>
 {% endblock %}

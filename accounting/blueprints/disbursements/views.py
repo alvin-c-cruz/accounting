@@ -4,6 +4,7 @@ from datetime import datetime
 from .models import Disbursements
 from .forms import DisbursementsForm
 from .. vendors import Vendors
+from .. accounts import Accounts
 
 bp = Blueprint("disbursements", __name__, template_folder="pages", url_prefix="/disbursements")
 obj = Disbursements()
@@ -32,6 +33,8 @@ def home(page):
 def add():
     form = DisbursementsForm()
     form.vendor_id.choices = vendor_choices()
+    for entry in form.entries:
+        entry.account_id.choices = account_choices()
     if form.validate_on_submit():
         new_data = obj
         new_data.data(form)
@@ -84,5 +87,11 @@ def export():
 
 def vendor_choices():
     data = Vendors.query.order_by(Vendors.vendor_name).all()
+    data.insert(0, "")
+    return data
+
+
+def account_choices():
+    data = Accounts.query.order_by(Accounts.account_number).all()
     data.insert(0, "")
     return data
