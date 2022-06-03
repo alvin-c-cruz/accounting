@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, send_file
-from flask_login import login_required
+from flask_login import login_required, current_user
+from datetime import datetime
 from .models import Vendors
 from .forms import VendorsForm
 
@@ -29,6 +30,7 @@ def add():
     if form.validate_on_submit():
         new_data = obj
         new_data.data(form)
+        new_data.user_id = current_user.name
         new_data.save_and_commit()
         flash(f"Added {new_data}", category="success")
         return redirect(url_for(obj.home_route, page=1))
@@ -46,6 +48,7 @@ def edit(id):
     form = VendorsForm(obj=data_to_edit)
     if form.validate_on_submit():
         data_to_edit.data(form)
+        data_to_edit.date_modified = datetime.now()
         data_to_edit.save_and_commit()
         flash(f"Edited {data_to_edit}", category="success")
         return redirect(url_for(obj.home_route, page=1))

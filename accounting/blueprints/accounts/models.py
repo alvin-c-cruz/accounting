@@ -11,5 +11,8 @@ class Accounts(db.Model, DataModel):
     account_type_id = db.Column(db.Integer, db.ForeignKey('tbl_account_type.id'), nullable=False)
     account_type = db.relationship('AccountType', backref=db.backref('tbl_accounts', lazy=True))
 
+    user_id = db.Column(db.Integer, db.ForeignKey('tbl_user.id'), nullable=False)
+    user = db.relationship('User', backref=db.backref(__tablename__, lazy=True))
+
     def __repr__(self):
         return f"{self.account_number}: {self.account_title}"

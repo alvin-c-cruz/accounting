@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, flash, redirect, url_for, send_file
-from flask_login import login_required
+from flask_login import login_required, current_user
+from datetime import datetime
 from .models import Accounts
 from .forms import AccountsForm
 from .. account_type import AccountType
@@ -23,6 +24,7 @@ def add():
     if form.validate_on_submit():
         new_data = Accounts()
         new_data.data(form)
+        new_data.user_id = current_user.name
         new_data.save_and_commit()
         flash(f"Added {new_data}", category="success")
         return redirect(url_for('accounts.home', page=1))
@@ -38,6 +40,7 @@ def edit(id):
     form.account_type_id.choices = account_type_choices()
     if form.validate_on_submit():
         data_to_edit.data(form)
+        data_to_edit.date_modified = datetime.now()
         data_to_edit.save_and_commit()
         flash(f"Edited {data_to_edit}", category="success")
         return redirect(url_for("accounts.home", page=1))
