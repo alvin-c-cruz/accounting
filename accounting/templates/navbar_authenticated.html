@@ -1,6 +1,17 @@
 <div class="navbar-nav">
     <a class="nav-link text-white" href="{{ url_for('landing_page.home') }}">Home</a>
 </div>
+
+<div class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownMenuLink" role="button"
+       data-bs-toggle="dropdown" aria-expanded="false">
+        Journals
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+        <li><a class="dropdown-item" href="{{ url_for('disbursements.home', page=1) }}">Check Disbursements</a></li>
+    </ul>
+</div>
+
 <div class="nav-item dropdown">
     <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownMenuLink" role="button"
        data-bs-toggle="dropdown" aria-expanded="false">
@@ -11,6 +22,7 @@
         <li><a class="dropdown-item" href="{{ url_for('vendors.home', page=1) }}">Vendors</a></li>
     </ul>
 </div>
+
 {% if current_user.admin %}
 <div class="nav-item dropdown">
     <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown"

@@ -1,12 +1,26 @@
-{% macro string_field(field) %}
-    <div class="form-group mt-2 mb-2 required">
+{% macro string_field(field, required=False) %}
+    <div class="form-group mt-2 mb-2 {% if required %}required{% endif %}">
         {{ field.label(class="control-label") }}
         {{ field(class="form-control", autocomplete="off") }}
     </div>
 {% endmacro %}
 
-{% macro select_field(field) %}
-    <div class="form-group mt-2 mb-2 required">
+{% macro date_field(field, required=False) %}
+    <div class="form-group mt-2 mb-2 {% if required %}required{% endif %}">
+        {{ field.label(class="control-label") }}
+        {{ field(class="form-control") }}
+    </div>
+{% endmacro %}
+
+{% macro textarea_field(field, required=False) %}
+    <div class="form-group mt-2 mb-2 {% if required %}required{% endif %}">
+        {{ field.label(class="control-label") }}
+        {{ field(class="form-control") }}
+    </div>
+{% endmacro %}
+
+{% macro select_field(field, required=False) %}
+    <div class="form-group mt-2 mb-2 {% if required %}required{% endif %}">
         {{ field.label(class="control-label") }}
         {{ field(class="form-select") }}
     </div>

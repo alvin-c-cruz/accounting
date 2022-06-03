@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% from "macros.html" import string_field, select_field, date_field, textarea_field, submit_field, add_btn %}
+
+{% block title %}{{ obj.edit_label }}{% endblock %}
+
+{% block content %}
+<h1>{{ obj.edit_label }}</h1>
+<form action="{{ url_for(obj.edit_route, id=id) }}" method="post" class="form">
+    {{ form.csrf_token }}
+    <div class="row">
+        <div class="col-6">
+            {{ date_field(form.record_date, True) }}
+        </div>
+        <div class="col-6">
+            {{ date_field(form.bank_date) }}
+        </div>
+    </div>
+    {{ select_field(form.vendor_id, True) }}
+    <div class="row">
+        <div class="col-6">
+            {{ string_field(form.disbursement_number, True) }}
+        </div>
+        <div class="col-6">
+            {{ string_field(form.check_number, True) }}
+        </div>
+    </div>
+    {{ textarea_field(form.notes) }}
+    {{ submit_field(form.submit) }}
+</form>
+{% endblock %}

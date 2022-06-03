@@ -7,7 +7,7 @@
 <h1>{{  obj.add_label  }}</h1>
 <form action="{{ url_for(obj.add_route) }}" method="post" class="form">
     {{ form.csrf_token }}
-    {{ string_field(form.vendor_name) }}
+    {{ string_field(form.vendor_name, True) }}
     {{ string_field(form.vendor_tin) }}
     {{ submit_field(form.submit) }}
 </form>
