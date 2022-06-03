@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% from "macros.html" import string_field, select_field, submit_field, add_btn %}
+
+{% block title %}{{ obj.edit_label }}{% endblock %}
+
+{% block content %}
+<h1>{{ obj.edit_label }}</h1>
+<form action="{{ url_for(obj.edit_route, id=id) }}" method="post" class="form">
+    {{ form.csrf_token }}
+    {{ string_field(form.vendor_name) }}
+    {{ string_field(form.vendor_tin) }}
+    {{ submit_field(form.submit) }}
+</form>
+{% endblock %}

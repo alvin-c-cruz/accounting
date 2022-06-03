@@ -4,6 +4,7 @@ from . import user
 
 # Level 1
 from . import account_type
+from . import vendors
 
 # Level 2
 from . import accounts

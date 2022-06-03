@@ -5,6 +5,8 @@ import os
 import json
 
 from .. account_type import AccountType
+from .. vendors import Vendors
+
 from .. accounts import Accounts
 
 bp = Blueprint('transition', __name__, url_prefix="/transition")
@@ -14,6 +16,8 @@ bp = Blueprint('transition', __name__, url_prefix="/transition")
 def home():
     default_user()
     reload(AccountType)
+    reload(Vendors)
+
     reload(Accounts)
     flash("Data reloaded.", category="success")
     return redirect(url_for("landing_page.home"))
@@ -56,4 +60,3 @@ def reload(obj):
             if key != "id":
                 setattr(new_data, key, value)
         new_data.save_and_commit()
-
