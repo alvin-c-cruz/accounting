@@ -1,7 +1,7 @@
 from flask import Blueprint, redirect, url_for, flash, current_app
 from flask_login import login_user
 from werkzeug.security import generate_password_hash
-from datetime import datetime
+from datetime import datetime, date
 import os
 import json
 
@@ -82,6 +82,12 @@ def reload(obj):
     for row in json_data:
         new_data = obj()
         for key, value in row.items():
-            if key != "id":
-                setattr(new_data, key, value)
+            if key == "id":
+                continue
+            if 'date' in key:
+                if value:
+                    value = datetime.strptime(value, '%Y-%m-%d %H:%M:%S.%f')
+
+            setattr(new_data, key, value)
+
         new_data.save_and_commit()

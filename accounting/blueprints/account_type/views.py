@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import Blueprint, render_template, redirect, url_for, flash, send_file
 from flask_login import login_required, current_user
 from .models import AccountType
@@ -34,6 +35,7 @@ def edit(id):
     form = AccountTypeForm(obj=data_to_edit)
     if form.validate_on_submit():
         data_to_edit.data(form)
+        data_to_edit.date_modified = datetime.now()
         data_to_edit.save_and_commit()
         flash(f"Edited {data_to_edit}", category="success")
         return redirect(url_for("account_type.home", page=1))
