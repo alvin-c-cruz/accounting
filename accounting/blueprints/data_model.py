@@ -32,7 +32,7 @@ class DataModel:
     def data(self, form):
         columns = self.__table__.columns.keys()
         for column in columns:
-            if column == 'id':
+            if column in ("id", "user_id"):
                 continue
             setattr(self, column, getattr(form, column).data)
 

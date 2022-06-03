@@ -1,7 +1,5 @@
-import os
-import json
 from flask import Blueprint, render_template, redirect, url_for, flash, send_file
-from flask_login import login_required
+from flask_login import login_required, current_user
 from .models import AccountType
 from .forms import AccountTypeForm
 
@@ -22,6 +20,7 @@ def add():
     if form.validate_on_submit():
         new_data = AccountType()
         new_data.data(form)
+        new_data.user_id = current_user.name
         new_data.save_and_commit()
         flash(f"Added {new_data}", category="success")
         return redirect(url_for("account_type.home", page=1))

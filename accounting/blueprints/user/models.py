@@ -12,3 +12,6 @@ class User(UserMixin, db.Model, DataModel):
     admin = db.Column(db.Boolean(), default=False)
     registered_on = db.Column(db.DateTime)
     confirmed_on = db.Column(db.DateTime)
+
+    def __repr__(self):
+        return self.name
