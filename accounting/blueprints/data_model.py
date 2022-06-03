@@ -2,7 +2,6 @@ from accounting import db
 import os
 import json
 from flask import current_app
-from datetime import date
 
 
 class DataModel:
