@@ -36,7 +36,7 @@ class DataModel:
                 continue
             setattr(self, column, getattr(form, column).data)
 
-    def export(self, id=None):
+    def as_json(self, id=None):
         if id:
             data = [getattr(self, "query").get(id)]
         else:
@@ -49,6 +49,9 @@ class DataModel:
                 {column: getattr(obj, column) for column in columns}
             )
 
+        return data_list
+
+    def export(self, id=None):
         with current_app.app_context():
             list_files = os.listdir(os.path.join(current_app.instance_path, "temp"))
             for file in list_files:
@@ -57,7 +60,7 @@ class DataModel:
             filename = os.path.join(current_app.instance_path, "temp", f"{self.__tablename__}.json")
 
         with open(filename, "w+") as f:
-            json.dump(data_list, f, indent=4, sort_keys=True, default=str)
+            json.dump(self.as_json(id), f, indent=4, sort_keys=True, default=str)
 
         return filename
 

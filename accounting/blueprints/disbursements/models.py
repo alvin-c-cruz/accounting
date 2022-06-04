@@ -30,8 +30,8 @@ class Disbursements(db.Model, DataModel):
 class DisbursementsEntry(db.Model, DataModel):
     __tablename__ = "tbl_disbursements_entry"
 
-    disbursement_id = db.Column(db.Integer, db.ForeignKey("tbl_disbursements.id"), nullable=False)
-    disbursement = db.relationship("Disbursements", backref=db.backref(__tablename__, lazy=True))
+    disbursement_id = db.Column(db.Integer, db.ForeignKey("tbl_disbursements.id", ondelete='CASCADE'), nullable=False)
+    disbursement = db.relationship("Disbursements", backref=db.backref(__tablename__, passive_deletes=True))
 
     account_id = db.Column(db.Integer, db.ForeignKey("tbl_accounts.id"), nullable=False)
     account = db.relationship("Accounts", backref=db.backref(__tablename__, lazy=True))

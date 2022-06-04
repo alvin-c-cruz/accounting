@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, send_file
+from flask import Blueprint, render_template, redirect, url_for, flash, send_file, jsonify
 from flask_login import login_required, current_user
 from datetime import datetime
 from .models import Disbursements, DisbursementsEntry
@@ -42,7 +42,7 @@ def add():
         new_data.user_id = current_user.name
         new_data.save()
         for i, entry in enumerate(form.entries):
-            if entry.account_id == "":
+            if entry.account_id.data == "":
                 continue
             new_entry = DisbursementsEntry()
             entry.disbursement_id.data = new_data.__repr__()
@@ -89,6 +89,7 @@ def edit(id):
 def delete(id):
     data_to_delete = Disbursements.query.get(id)
     data_to_delete.delete_and_commit()
+
     flash(f"Deleted {data_to_delete}", category="success")
     return redirect(url_for(obj.home_route, page=1))
 
@@ -110,3 +111,12 @@ def account_choices():
     data = Accounts.query.order_by(Accounts.account_number).all()
     data.insert(0, "")
     return data
+
+
+@bp.route("/view")
+@login_required
+def view():
+    data = [x.as_json() for x in DisbursementsEntry.query.all()]
+    return jsonify(data)
+
+
