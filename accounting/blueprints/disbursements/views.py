@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, send_file
 from flask_login import login_required, current_user
 from datetime import datetime
-from .models import Disbursements
+from .models import Disbursements, DisbursementsEntry
 from .forms import DisbursementsForm
 from .. vendors import Vendors
 from .. accounts import Accounts
@@ -35,13 +35,26 @@ def add():
     form.vendor_id.choices = vendor_choices()
     for entry in form.entries:
         entry.account_id.choices = account_choices()
+
     if form.validate_on_submit():
         new_data = obj
         new_data.data(form)
         new_data.user_id = current_user.name
-        new_data.save_and_commit()
+        new_data.save()
+        for i, entry in enumerate(form.entries):
+            if entry.account_id == "":
+                continue
+            new_entry = DisbursementsEntry()
+            entry.disbursement_id.data = new_data.__repr__()
+            new_entry.data(entry)
+            new_entry.save()
+        new_data.commit()
+
         flash(f"Added {new_data}", category="success")
         return redirect(url_for(obj.home_route, page=1))
+
+    else:
+        form.record_date.data = datetime.today()
     return render_template(
         obj.add_html,
         obj=obj,
@@ -55,6 +68,8 @@ def edit(id):
     data_to_edit = obj.query.get(id)
     form = DisbursementsForm(obj=data_to_edit)
     form.vendor_id.choices = vendor_choices()
+    for entry in form.entries:
+        entry.account_id.choices = account_choices()
     if form.validate_on_submit():
         data_to_edit.data(form)
         data_to_edit.date_modified = datetime.now()

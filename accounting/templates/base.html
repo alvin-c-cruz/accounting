@@ -18,7 +18,7 @@
     {% endfor %}
     {% endwith %}
 
-    {% with messages=get_flashed_messages(category_filter=["success"]) %}
+    {% with messages=get_flashed_messages(category_filter=["success", ""]) %}
     {% for message in messages %}
     <p class="alert alert-success" role="alert">
         {{ message }}

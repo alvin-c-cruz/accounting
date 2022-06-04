@@ -6,7 +6,6 @@ from flask import current_app
 
 class DataModel:
     id = db.Column(db.Integer, primary_key=True)
-    date_modified = db.Column(db.DateTime, nullable=True)
 
     @staticmethod
     def commit():
@@ -33,7 +32,7 @@ class DataModel:
     def data(self, form):
         columns = self.__table__.columns.keys()
         for column in columns:
-            if column in ("id", "user_id", "date_modified"):
+            if column in ("id", "user_id", "date_modified", "entries"):
                 continue
             setattr(self, column, getattr(form, column).data)
 

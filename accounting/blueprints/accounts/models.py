@@ -14,5 +14,7 @@ class Accounts(db.Model, DataModel):
     user_id = db.Column(db.Integer, db.ForeignKey('tbl_user.id'), nullable=False)
     user = db.relationship('User', backref=db.backref(__tablename__, lazy=True))
 
+    date_modified = db.Column(db.DateTime, nullable=True)
+
     def __repr__(self):
         return f"{self.account_number}: {self.account_title}"

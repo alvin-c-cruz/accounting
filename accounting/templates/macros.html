@@ -46,7 +46,7 @@
 
 {% macro entry_string_field(field, required=False) %}
     <div class="form-group mt-2 mb-2 {% if required %}required{% endif %}">
-        {{ field(class="form-control", autocomplete="off") }}
+        {{ field(class="form-control", style="text-align:right;", autocomplete="off") }}
     </div>
 {% endmacro %}
 

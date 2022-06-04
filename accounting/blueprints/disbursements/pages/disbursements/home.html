@@ -24,7 +24,11 @@
     <tr>
         {% for column in columns %}
             {% if 'date' in column['key'] %}
-        <td>{{ row[column['key']].strftime('%Y-%b-%d')  }}</td>
+        <td>
+            {% if row[column['key']] %}
+            {{ row[column['key']].strftime('%Y-%b-%d')  }}
+            {% endif %}
+        </td>
             {% else %}
         <td>{{ row[column['key']]  }}</td>
             {% endif %}

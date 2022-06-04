@@ -10,7 +10,7 @@ class Disbursements(db.Model, DataModel):
     edit_label = "Edit Check Disbursement"
 
     record_date = db.Column(db.DateTime, nullable=False)
-    bank_date = db.Column(db.DateTime, nullable=True)
+    bank_date = db.Column(db.DateTime)
     disbursement_number = db.Column(db.String(32), nullable=False, unique=True)
     check_number = db.Column(db.String(32), nullable=False, unique=True)
     notes = db.Column(db.String(255), nullable=True)
@@ -20,6 +20,8 @@ class Disbursements(db.Model, DataModel):
 
     user_id = db.Column(db.Integer, db.ForeignKey('tbl_user.id'), nullable=False)
     user = db.relationship('User', backref=db.backref(__tablename__, lazy=True))
+
+    date_modified = db.Column(db.DateTime, nullable=True)
 
     def __repr__(self):
         return f"{self.disbursement_number}: {self.vendor_id}"
@@ -37,7 +39,7 @@ class DisbursementsEntry(db.Model, DataModel):
     debit = db.Column(db.Float, default="0.0")
     credit = db.Column(db.Float, default="0.0")
 
-    notes = db.Column(db.String(255), nullable=False)
+    notes = db.Column(db.String(255))
 
     def __repr__(self):
-        return f"{self.disbursement} - {self.account_id}: {self.debit - self.credit}"
+        return f"{self.disbursement_id} - {self.account_id}: {self.debit - self.credit}"
