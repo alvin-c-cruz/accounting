@@ -88,6 +88,10 @@ def edit(id):
 @login_required
 def delete(id):
     data_to_delete = Disbursements.query.get(id)
+    entry_to_delete = DisbursementsEntry.query.filter_by(disbursement_id=data_to_delete.__repr__()).all()
+    for entry in entry_to_delete:
+        entry.delete()
+
     data_to_delete.delete_and_commit()
 
     flash(f"Deleted {data_to_delete}", category="success")
