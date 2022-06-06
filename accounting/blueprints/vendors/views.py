@@ -5,12 +5,12 @@ from .models import Vendors
 from .forms import VendorsForm
 
 bp = Blueprint("vendors", __name__, template_folder="pages", url_prefix="/vendors")
-obj = Vendors()
 
 
 @bp.route("/<int:page>")
 @login_required
 def home(page):
+    obj = Vendors()
     data = Vendors.query.order_by(Vendors.vendor_name).paginate(page=page, per_page=10)
     return render_template(
         obj.home_html,
@@ -26,6 +26,7 @@ def home(page):
 @bp.route("/add", methods=["GET", "POST"])
 @login_required
 def add():
+    obj = Vendors()
     form = VendorsForm()
     if form.validate_on_submit():
         new_data = obj
@@ -44,6 +45,7 @@ def add():
 @bp.route("/edit/<id>", methods=["GET", "POST"])
 @login_required
 def edit(id):
+    obj = Vendors()
     data_to_edit = Vendors.query.get(id)
     form = VendorsForm(obj=data_to_edit)
     if form.validate_on_submit():
@@ -63,6 +65,7 @@ def edit(id):
 @bp.route("/delete/<id>", methods=["GET", "POST"])
 @login_required
 def delete(id):
+    obj = Vendors()
     data_to_delete = Vendors.query.get(id)
     data_to_delete.delete_and_commit()
     flash(f"Deleted {data_to_delete}", category="success")
@@ -72,5 +75,6 @@ def delete(id):
 @bp.route("/export")
 @login_required
 def export():
+    obj = Vendors()
     filename = obj.export()
     return send_file('{}'.format(filename), as_attachment=True, cache_timeout=0)

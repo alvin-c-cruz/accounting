@@ -7,12 +7,12 @@ from .. vendors import Vendors
 from .. accounts import Accounts
 
 bp = Blueprint("disbursements", __name__, template_folder="pages", url_prefix="/disbursements")
-obj = Disbursements()
 
 
 @bp.route("/<int:page>")
 @login_required
 def home(page):
+    obj = Disbursements()
     data = Disbursements.query.order_by(Disbursements.disbursement_number).paginate(page=page, per_page=10)
     return render_template(
         obj.home_html,
@@ -31,6 +31,7 @@ def home(page):
 @bp.route("/add", methods=["GET", "POST"])
 @login_required
 def add():
+    obj = Disbursements()
     form = DisbursementsForm()
     form.vendor_id.choices = vendor_choices()
     for entry in form.entries:
@@ -40,15 +41,14 @@ def add():
         new_data = obj
         new_data.data(form)
         new_data.user_id = current_user.name
-        new_data.save()
+        new_data.save_and_commit()
         for i, entry in enumerate(form.entries):
             if entry.account_id.data == "":
                 continue
             new_entry = DisbursementsEntry()
             entry.disbursement_id.data = new_data.__repr__()
             new_entry.data(entry)
-            new_entry.save()
-        new_data.commit()
+            new_entry.save_and_commit()
 
         flash(f"Added {new_data}", category="success")
         return redirect(url_for(obj.home_route, page=1))
@@ -65,6 +65,7 @@ def add():
 @bp.route("/edit/<id>", methods=["GET", "POST"])
 @login_required
 def edit(id):
+    obj = Disbursements()
     data_to_edit = obj.query.get(id)
     form = DisbursementsForm(obj=data_to_edit)
     form.vendor_id.choices = vendor_choices()
@@ -87,10 +88,11 @@ def edit(id):
 @bp.route("/delete/<id>", methods=["GET", "POST"])
 @login_required
 def delete(id):
+    obj = Disbursements()
     data_to_delete = Disbursements.query.get(id)
     entry_to_delete = DisbursementsEntry.query.filter_by(disbursement_id=data_to_delete.__repr__()).all()
     for entry in entry_to_delete:
-        entry.delete()
+        entry.delete_and_commit()
 
     data_to_delete.delete_and_commit()
 
@@ -101,6 +103,7 @@ def delete(id):
 @bp.route("/export")
 @login_required
 def export():
+    obj = Disbursements()
     filename = obj.export()
     return send_file('{}'.format(filename), as_attachment=True, cache_timeout=0)
 
@@ -122,5 +125,3 @@ def account_choices():
 def view():
     data = [x.as_json() for x in DisbursementsEntry.query.all()]
     return jsonify(data)
-
-
