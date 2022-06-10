@@ -1,0 +1,18 @@
+[
+    {
+        "id": 1,
+        "account_number": "1101",
+        "account_title": "Cash in Bank",
+        "account_type_id": "Cash and Cash Equivalent",
+        "date_modified": null,
+        "user_id": "Alvin"
+    },
+    {
+        "id": 2,
+        "account_number": "6001",
+        "account_title": "Salaries and Wages",
+        "account_type_id": "Operating Expenses",
+        "date_modified": null,
+        "user_id": "Alvin"
+    }
+]
