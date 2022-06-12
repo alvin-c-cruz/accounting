@@ -8,7 +8,7 @@
         Journals
     </a>
     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-        <li><a class="dropdown-item" href="#">Check Disbursements</a></li>
+        <li><a class="dropdown-item" href="{{ url_for('disbursements.home', page=1) }}">Check Disbursements</a></li>
     </ul>
 </div>
 
@@ -18,8 +18,8 @@
         Options
     </a>
     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-        <li><a class="dropdown-item" href="#">Chart of Accounts</a></li>
-        <li><a class="dropdown-item" href="#">Vendors</a></li>
+        <li><a class="dropdown-item" href="{{ url_for('accounts.home', page=1) }}">Chart of Accounts</a></li>
+        <li><a class="dropdown-item" href="{{ url_for('vendors.home', page=1) }}">Vendors</a></li>
     </ul>
 </div>
 
@@ -30,7 +30,9 @@
         Admin Options
     </a>
     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-        <li><a class="dropdown-item" href="#">Account Type</a></li>
+        <li><a class="dropdown-item" href="{{ url_for('account_type.home', page=1) }}">Account Type</a></li>
+        <li><a class="dropdown-item" href="#">Another action</a></li>
+        <li><a class="dropdown-item" href="#">Something else here</a></li>
     </ul>
 </div>
 

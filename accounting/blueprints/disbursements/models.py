@@ -3,11 +3,8 @@ from .. data_model import DataModel
 
 
 class Disbursements(db.Model, DataModel):
-    __tablename__ = "tbl_disbursements"
-
     page_title = "Check Disbursements"
     add_label = "Add Check Disbursement"
-    edit_label = "Edit Check Disbursement"
 
     record_date = db.Column(db.DateTime, nullable=False)
     bank_date = db.Column(db.DateTime)
@@ -16,25 +13,23 @@ class Disbursements(db.Model, DataModel):
     notes = db.Column(db.String(255), nullable=True)
 
     vendor_id = db.Column(db.Integer, db.ForeignKey("tbl_vendors.id"), nullable=False)
-    vendor = db.relationship("Vendors", backref=db.backref(__tablename__, lazy=True))
+    vendor = db.relationship("Vendors", backref=db.backref("disbursements", lazy=True))
 
     user_id = db.Column(db.Integer, db.ForeignKey('tbl_user.id'), nullable=False)
-    user = db.relationship('User', backref=db.backref(__tablename__, lazy=True))
+    user = db.relationship('User', backref=db.backref("disbursements", lazy=True))
 
     date_modified = db.Column(db.DateTime, nullable=True)
+    entries = db.relationship("DisbursementsEntry", backref="disbursements")
 
     def __repr__(self):
         return f"{self.disbursement_number}: {self.vendor_id}"
 
 
 class DisbursementsEntry(db.Model, DataModel):
-    __tablename__ = "tbl_disbursements_entry"
-
-    disbursement_id = db.Column(db.Integer, db.ForeignKey("tbl_disbursements.id"), nullable=False)
-    disbursement_parent = db.relationship("Disbursements", backref=db.backref(__tablename__, lazy=True))
+    disbursement_id = db.Column(db.Integer, db.ForeignKey("disbursements.id"), nullable=False)
 
     account_id = db.Column(db.Integer, db.ForeignKey("tbl_accounts.id"), nullable=False)
-    account = db.relationship("Accounts", backref=db.backref(__tablename__, lazy=True))
+    account = db.relationship("Accounts", backref=db.backref("disbursementsentry", lazy=True))
 
     debit = db.Column(db.Float, default="0.0")
     credit = db.Column(db.Float, default="0.0")

@@ -65,9 +65,10 @@ def add():
 @bp.route("/edit/<id>", methods=["GET", "POST"])
 @login_required
 def edit(id):
-    obj = Disbursements()
-    data_to_edit = obj.query.get(id)
+    data_to_edit = Disbursements.query.filter_by(id=id).first()
     form = DisbursementsForm(obj=data_to_edit)
+    breakpoint()
+    form.entries(obj=data_to_edit.disbursements)
     form.vendor_id.choices = vendor_choices()
     for entry in form.entries:
         entry.account_id.choices = account_choices()
@@ -76,12 +77,11 @@ def edit(id):
         data_to_edit.date_modified = datetime.now()
         data_to_edit.save_and_commit()
         flash(f"Edited {data_to_edit}", category="success")
-        return redirect(url_for(obj.home_route, page=1))
+        return redirect(url_for("disbursements.home", page=1))
     return render_template(
-        obj.edit_html,
+        "disbursements/edit.html",
         form=form,
-        id=id,
-        obj=obj
+        id=id
     )
 
 
