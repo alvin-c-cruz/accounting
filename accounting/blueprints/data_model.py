@@ -7,28 +7,6 @@ from flask import current_app
 class DataModel:
     id = db.Column(db.Integer, primary_key=True)
 
-    @staticmethod
-    def commit():
-        db.session.commit()
-
-    def save(self):
-        db.session.add(self)
-
-    def delete(self):
-        db.session.delete(self)
-
-    def delete_all(self):
-        getattr(self, "query").delete()
-        db.session.commit()
-
-    def save_and_commit(self):
-        self.save()
-        self.commit()
-
-    def delete_and_commit(self):
-        self.delete()
-        self.commit()
-
     def data(self, form):
         columns = self.__table__.columns.keys()
         for column in columns:
@@ -64,47 +42,3 @@ class DataModel:
 
         return filename
 
-    @property
-    def add_route(self):
-        class_name = str(self.__class__)[str(self.__class__).rfind('.') + 1: len(str(self.__class__)) - 2].lower()
-        return f"{class_name}.add"
-
-    @property
-    def edit_route(self):
-        class_name = str(self.__class__)[str(self.__class__).rfind('.') + 1: len(str(self.__class__)) - 2].lower()
-        return f"{class_name}.edit"
-
-    @property
-    def delete_route(self):
-        class_name = str(self.__class__)[str(self.__class__).rfind('.') + 1: len(str(self.__class__)) - 2].lower()
-        return f"{class_name}.delete"
-
-    @property
-    def export_route(self):
-        class_name = str(self.__class__)[str(self.__class__).rfind('.') + 1: len(str(self.__class__)) - 2].lower()
-        return f"{class_name}.export"
-
-    @property
-    def home_route(self):
-        class_name = str(self.__class__)[str(self.__class__).rfind('.') + 1: len(str(self.__class__)) - 2].lower()
-        return f"{class_name}.home"
-
-    def fields(self):
-        data = self.__table__.columns.keys()
-        data.remove("id")
-        return data
-
-    @property
-    def home_html(self):
-        class_name = str(self.__class__)[str(self.__class__).rfind('.') + 1: len(str(self.__class__)) - 2].lower()
-        return f"{class_name}/home.html"
-
-    @property
-    def add_html(self):
-        class_name = str(self.__class__)[str(self.__class__).rfind('.') + 1: len(str(self.__class__)) - 2].lower()
-        return f"{class_name}/add.html"
-
-    @property
-    def edit_html(self):
-        class_name = str(self.__class__)[str(self.__class__).rfind('.') + 1: len(str(self.__class__)) - 2].lower()
-        return f"{class_name}/edit.html"

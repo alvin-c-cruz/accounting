@@ -6,7 +6,7 @@ import os
 import json
 from accounting import db
 
-# from .. account_type import AccountType
+from .. account_type import AccountType
 # from .. vendors import Vendors
 #
 # from .. accounts import Accounts
@@ -18,7 +18,7 @@ bp = Blueprint('transition', __name__, url_prefix="/transition")
 def home():
     test_user()
     default_user()
-    # reload(AccountType)
+    reload(AccountType)
     # reload(Vendors)
     #
     # reload(Accounts)
@@ -68,6 +68,7 @@ def default_user():
 
 def reload(obj):
     obj.query.delete()
+    db.session.commit()
 
     with current_app.app_context():
         filename = os.path.join(current_app.instance_path, "uploads", f"{obj.__tablename__}.json")

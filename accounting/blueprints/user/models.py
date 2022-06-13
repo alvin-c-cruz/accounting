@@ -12,5 +12,7 @@ class User(UserMixin, db.Model, DataModel):
     registered_on = db.Column(db.DateTime, default=datetime.utcnow)
     confirmed_on = db.Column(db.DateTime)
 
+    account_types = db.relationship('AccountType', backref="user", lazy="joined")
+
     def __repr__(self):
         return self.name

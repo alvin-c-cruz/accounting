@@ -37,7 +37,7 @@ def edit(id):
     form = AccountTypeForm(obj=data_to_edit)
     if form.validate_on_submit():
         data_to_edit.data(form)
-        data_to_edit.date_modified = datetime.now()
+        data_to_edit.date_modified = datetime.utcnow()
         db.session.commit()
         flash(f"Edited {data_to_edit}", category="success")
         return redirect(url_for("account_type.home", page=1))
