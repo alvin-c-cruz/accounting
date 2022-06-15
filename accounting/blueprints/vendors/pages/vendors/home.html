@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% from "macros.html" import add_btn, edit_btn, delete_btn, render_pagination %}
 
-{% block title %}{{  obj.page_title  }}{% endblock %}
+{% block title %}Vendors{% endblock %}
 
 {% block content %}
-<h1>{{  obj.page_title  }}</h1>
-{{ add_btn(obj.add_route, obj.add_label) }}
-{{ add_btn(obj.export_route, "Export") }}
+<h1>Vendors</h1>
+{{ add_btn('vendors.add', "Add Vendor") }}
+{{ add_btn('vendors.export', "Export") }}
 
 <table class="table table-striped table-dark">
     <tr>
@@ -26,12 +26,12 @@
         <td>{{ row[column['key']]  }}</td>
         {% endfor %}
         <td>
-            {{ edit_btn(obj.edit_route, row.id) }}
-            {{ delete_btn(obj.delete_route, row.id) }}
+            {{ edit_btn('vendors.edit', row.id) }}
+            {{ delete_btn('vendors.delete', row.id) }}
         </td>
     </tr>
         {% endfor %}
     {% endif %}
 </table>
-{{ render_pagination(data, obj.home_route) }}
+{{ render_pagination(data, 'vendors.home') }}
 {% endblock %}

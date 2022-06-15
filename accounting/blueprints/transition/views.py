@@ -7,7 +7,7 @@ import json
 from accounting import db
 
 from .. account_type import AccountType
-# from .. vendors import Vendors
+from .. vendors import Vendors
 #
 # from .. accounts import Accounts
 
@@ -19,7 +19,7 @@ def home():
     test_user()
     default_user()
     reload(AccountType)
-    # reload(Vendors)
+    reload(Vendors)
     #
     # reload(Accounts)
     flash("Data reloaded.", category="success")
