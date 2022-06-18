@@ -9,7 +9,7 @@ from accounting import db
 from .. account_type import AccountType
 from .. vendors import Vendors
 #
-# from .. accounts import Accounts
+from .. accounts import Accounts
 
 bp = Blueprint('transition', __name__, url_prefix="/transition")
 
@@ -20,8 +20,8 @@ def home():
     default_user()
     reload(AccountType)
     reload(Vendors)
-    #
-    # reload(Accounts)
+
+    reload(Accounts)
     flash("Data reloaded.", category="success")
     return redirect(url_for("landing_page.home"))
 

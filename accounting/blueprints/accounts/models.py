@@ -3,17 +3,10 @@ from .. data_model import DataModel
 
 
 class Accounts(db.Model, DataModel):
-    __tablename__ = "tbl_accounts"
-
     account_number = db.Column(db.String(32), nullable=False)
     account_title = db.Column(db.String(255), nullable=False)
-
-    account_type_id = db.Column(db.Integer, db.ForeignKey('tbl_account_type.id'), nullable=False)
-    account_type = db.relationship('AccountType', backref=db.backref('tbl_accounts', lazy=True))
-
-    user_id = db.Column(db.Integer, db.ForeignKey('tbl_user.id'), nullable=False)
-    user = db.relationship('User', backref=db.backref(__tablename__, lazy=True))
-
+    account_type_id = db.Column(db.Integer, db.ForeignKey('account_type.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     date_modified = db.Column(db.DateTime, nullable=True)
 
     def __repr__(self):

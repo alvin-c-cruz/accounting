@@ -14,6 +14,7 @@ class User(UserMixin, db.Model, DataModel):
 
     account_types = db.relationship('AccountType', backref="user", lazy="joined")
     vendors = db.relationship('Vendors', backref="user", lazy="joined")
+    accounts = db.relationship('Accounts', backref="user", lazy="joined")
 
     def __repr__(self):
         return self.name

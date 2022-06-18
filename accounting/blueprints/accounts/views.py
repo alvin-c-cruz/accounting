@@ -1,6 +1,9 @@
 from flask import Blueprint, render_template, flash, redirect, url_for, send_file
 from flask_login import login_required, current_user
 from datetime import datetime
+
+from accounting import db
+
 from .models import Accounts
 from .forms import AccountsForm
 from .. account_type import AccountType
@@ -25,7 +28,8 @@ def add():
         new_data = Accounts()
         new_data.data(form)
         new_data.user_id = current_user.name
-        new_data.save_and_commit()
+        db.session.add(new_data)
+        db.session.commit()
         flash(f"Added {new_data}", category="success")
         return redirect(url_for('accounts.home', page=1))
 
@@ -41,7 +45,7 @@ def edit(id):
     if form.validate_on_submit():
         data_to_edit.data(form)
         data_to_edit.date_modified = datetime.now()
-        data_to_edit.save_and_commit()
+        db.session.commit()
         flash(f"Edited {data_to_edit}", category="success")
         return redirect(url_for("accounts.home", page=1))
     return render_template("accounts/edit.html", form=form, id=id)
@@ -51,7 +55,8 @@ def edit(id):
 @login_required
 def delete(id):
     data_to_delete = Accounts.query.get(id)
-    data_to_delete.delete_and_commit()
+    db.session.delete(data_to_delete)
+    db.session.commit()
     flash(f"Deleted {data_to_delete}", category="success")
     return redirect(url_for("accounts.home", page=1))
 

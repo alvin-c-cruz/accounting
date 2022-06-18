@@ -18,7 +18,7 @@
         Options
     </a>
     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-        <li><a class="dropdown-item" href="#">Chart of Accounts</a></li>
+        <li><a class="dropdown-item" href="{{ url_for('accounts.home', page=1) }}">Chart of Accounts</a></li>
         <li><a class="dropdown-item" href="{{ url_for('vendors.home', page=1) }}">Vendors</a></li>
     </ul>
 </div>

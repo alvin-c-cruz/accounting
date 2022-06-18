@@ -2,14 +2,9 @@ import os
 from flask import Flask,  redirect, url_for, abort, request
 from flask_login import LoginManager
 from http import HTTPStatus
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-from flask_mail import Mail
-from flask_bcrypt import Bcrypt
 
-db = SQLAlchemy()
-mail = Mail()
-bcrypt = Bcrypt()
+from flask_migrate import Migrate
+from .extensions import db, mail, bcrypt
 
 from . import blueprints
 

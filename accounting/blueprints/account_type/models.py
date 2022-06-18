@@ -6,9 +6,10 @@ class AccountType(db.Model, DataModel):
     account_type = db.Column(db.String(64), unique=True, nullable=False)
     classification = db.Column(db.String(8), nullable=False)
     priority = db.Column(db.String(8), nullable=False)
-
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     date_modified = db.Column(db.DateTime, nullable=True)
+
+    accounts = db.relationship('Accounts', backref="account_type", lazy="joined")
 
     def __repr__(self):
         return self.account_type
