@@ -7,9 +7,9 @@
 <h1>Edit Account Type</h1>
 <form action="{{ url_for('account_type.edit', id=id) }}" method="post" class="form">
     {{ form.csrf_token }}
-    {{ string_field(form.account_type, True) }}
-    {{ select_field(form.classification, True) }}
-    {{ string_field(form.priority, True) }}
+    {{ string_field(form.account_type) }}
+    {{ select_field(form.classification) }}
+    {{ string_field(form.priority) }}
     {{ submit_field(form.submit) }}
 </form>
 {% endblock %}

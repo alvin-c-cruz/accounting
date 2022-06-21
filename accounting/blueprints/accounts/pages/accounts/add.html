@@ -7,9 +7,9 @@
 <h1>Add Account</h1>
 <form action="{{ url_for('accounts.add') }}" method="post" class="form">
     {{ form.csrf_token }}
-    {{ string_field(form.account_number, True) }}
-    {{ string_field(form.account_title, True) }}
-    {{ select_field(form.account_type_id, True) }}
+    {{ string_field(form.account_number) }}
+    {{ string_field(form.account_title) }}
+    {{ select_field(form.account_type_id) }}
     {{ submit_field(form.submit) }}
 </form>
 {% endblock %}

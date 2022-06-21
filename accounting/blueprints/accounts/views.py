@@ -25,14 +25,36 @@ def add():
     form.account_type_id.choices = account_type_choices()
 
     if form.validate_on_submit():
-        new_data = Accounts()
-        new_data.data(form)
-        new_data.user_id = current_user.name
-        db.session.add(new_data)
-        db.session.commit()
-        flash(f"Added {new_data}", category="success")
-        return redirect(url_for('accounts.home', page=1))
+        validated = True
+        account_number = form.account_number.data
+        account_title = form.account_title.data
+        account_type_id = form.account_type_id.data
 
+        if account_number == "":
+            form.account_number.errors.append("Please type account number.")
+            validated = False
+        elif Accounts.query.filter_by(account_number=account_number).first():
+            form.account_number.errors.append("Account number is already in use.")
+            validated = False
+
+        if account_title == "":
+            form.account_title.errors.append("Please type account title.")
+            validated = False
+        elif Accounts.query.filter_by(account_title=account_title).first():
+            form.account_title.errors.append("Account title is already in use.")
+            validated = False
+
+        if validated:
+            new_data = Accounts(
+                account_number=account_number,
+                account_title=account_title,
+                account_type_id=account_type_id,
+                user_id=current_user.name
+            )
+            db.session.add(new_data)
+            db.session.commit()
+            flash(f"Added {new_data}", category="success")
+            return redirect(url_for('accounts.home', page=1))
     return render_template("accounts/add.html", form=form)
 
 
@@ -43,11 +65,34 @@ def edit(id):
     form = AccountsForm(obj=data_to_edit)
     form.account_type_id.choices = account_type_choices()
     if form.validate_on_submit():
-        data_to_edit.data(form)
-        data_to_edit.date_modified = datetime.now()
-        db.session.commit()
-        flash(f"Edited {data_to_edit}", category="success")
-        return redirect(url_for("accounts.home", page=1))
+        validated = True
+        account_number = form.account_number.data
+        account_title = form.account_title.data
+        account_type_id = form.account_type_id.data
+
+        if account_number == "":
+            form.account_number.errors.append("Please type account number.")
+            validated = False
+        elif Accounts.query.filter(Accounts.account_number == account_number, Accounts.id != data_to_edit.id).first():
+            form.account_number.errors.append("Account number is already in use.")
+            validated = False
+
+        if account_title == "":
+            form.account_title.errors.append("Please type account title.")
+            validated = False
+        elif Accounts.query.filter(Accounts.account_title == account_title, Accounts.id != data_to_edit.id).first():
+            form.account_title.errors.append("Account title is already in use.")
+            validated = False
+
+        if validated:
+            data_to_edit.account_number = account_number
+            data_to_edit.account_title = account_title
+            data_to_edit.account_type_id = account_type_id
+            data_to_edit.user_id = current_user.name
+            data_to_edit.date_modified = datetime.now()
+            db.session.commit()
+            flash(f"Edited {data_to_edit}", category="success")
+            return redirect(url_for("accounts.home", page=1))
     return render_template("accounts/edit.html", form=form, id=id)
 
 

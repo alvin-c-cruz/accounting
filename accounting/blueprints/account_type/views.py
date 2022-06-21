@@ -20,13 +20,25 @@ def home(page):
 def add():
     form = AccountTypeForm()
     if form.validate_on_submit():
-        new_data = AccountType()
-        new_data.data(form)
-        new_data.user_id = current_user.name
-        db.session.add(new_data)
-        db.session.commit()
-        flash(f"Added {new_data}", category="success")
-        return redirect(url_for("account_type.home", page=1))
+        account_type = form.account_type.data
+        classification = form.classification.data
+        priority = form.priority.data
+
+        if account_type == "":
+            form.account_type.errors.append("Please type description of account type.")
+        elif AccountType.query.filter_by(account_type=account_type).first():
+            form.account_type.errors.append("Account type's description is already used.")
+        else:
+            new_data = AccountType(
+                account_type=account_type,
+                classification=classification,
+                priority=priority,
+                user_id=current_user.name
+            )
+            db.session.add(new_data)
+            db.session.commit()
+            flash(f"Added {new_data}", category="success")
+            return redirect(url_for("account_type.home", page=1))
     return render_template("account_type/add.html", form=form)
 
 
@@ -36,11 +48,23 @@ def edit(id):
     data_to_edit = AccountType.query.get(id)
     form = AccountTypeForm(obj=data_to_edit)
     if form.validate_on_submit():
-        data_to_edit.data(form)
-        data_to_edit.date_modified = datetime.utcnow()
-        db.session.commit()
-        flash(f"Edited {data_to_edit}", category="success")
-        return redirect(url_for("account_type.home", page=1))
+        account_type = form.account_type.data
+        classification = form.classification.data
+        priority = form.priority.data
+
+        if account_type == "":
+            form.account_type.errors.append("Please type description of account type.")
+        elif AccountType.query.filter(AccountType.account_type == account_type, AccountType.id != data_to_edit.id).first():
+            form.account_type.errors.append("Account type's description is already used.")
+        else:
+            data_to_edit.account_type = account_type
+            data_to_edit.classification = classification
+            data_to_edit.priority = priority
+            data_to_edit.user_id = current_user.name
+            data_to_edit.date_modified = datetime.utcnow()
+            db.session.commit()
+            flash(f"Edited {data_to_edit}", category="success")
+            return redirect(url_for("account_type.home", page=1))
     return render_template("account_type/edit.html", form=form, id=id)
 
 

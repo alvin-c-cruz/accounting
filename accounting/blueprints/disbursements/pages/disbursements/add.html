@@ -1,16 +1,16 @@
 {% extends "base.html" %}
 {% from "macros.html" import string_field, select_field, date_field, textarea_field, entry_string_field, entry_select_field, submit_field, delete_btn %}
 
-{% block title %}{{ obj.page_title }}{% endblock %}
+{% block title %}Add Disbursement{% endblock %}
 
 {% block content %}
-<h1>{{  obj.add_label  }}</h1>
+<h1>Add Disbursement</h1>
 {% for field, errors in form.errors.items() %}
 <div class="alert alert-error">
     {{ form[field].label }}: {{ errors }}
 </div>
 {% endfor %}
-<form action="{{ url_for(obj.add_route) }}" method="post" class="form">
+<form action="{{ url_for(disbursements.add) }}" method="post" class="form">
     {{ form.csrf_token }}
     <div class="row">
         <div class="col-6">
