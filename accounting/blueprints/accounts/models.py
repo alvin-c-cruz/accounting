@@ -8,10 +8,10 @@ class Accounts(db.Model, DataModel):
     account_title = db.Column(db.String(255), nullable=False, unique=True)
 
     account_type_id = db.Column(db.Integer, db.ForeignKey('account_type.id'), nullable=False)
-    account_type = db.relationship('AccountType', backref="accounts", lazy="joined")
+    account_type = db.relationship('AccountType', backref="accounts")
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    user = db.relationship('User', backref="accounts", lazy="joined")
+    user = db.relationship('User', backref="accounts")
 
     date_modified = db.Column(db.DateTime, nullable=True)
 

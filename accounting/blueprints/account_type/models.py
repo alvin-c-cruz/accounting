@@ -9,7 +9,8 @@ class AccountType(db.Model, DataModel):
     priority = db.Column(db.String(8), nullable=False)
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    user = db.relationship('User', backref="account_types", lazy="joined")
+    user = db.relationship('User', backref="account_types")
+
     date_modified = db.Column(db.DateTime, nullable=True)
 
     def __repr__(self):

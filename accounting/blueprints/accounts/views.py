@@ -28,7 +28,7 @@ def add():
         validated = True
         account_number = form.account_number.data
         account_title = form.account_title.data
-        account_type_id = form.account_type_id.data
+        account_type_id = form.account_type_id.data.id
 
         if account_number == "":
             form.account_number.errors.append("Please type account number.")
@@ -49,7 +49,7 @@ def add():
                 account_number=account_number,
                 account_title=account_title,
                 account_type_id=account_type_id,
-                user_id=current_user.name
+                user_id=current_user.id
             )
             db.session.add(new_data)
             db.session.commit()
@@ -68,7 +68,7 @@ def edit(id):
         validated = True
         account_number = form.account_number.data
         account_title = form.account_title.data
-        account_type_id = form.account_type_id.data
+        account_type_id = form.account_type_id.data.id
 
         if account_number == "":
             form.account_number.errors.append("Please type account number.")
@@ -88,7 +88,7 @@ def edit(id):
             data_to_edit.account_number = account_number
             data_to_edit.account_title = account_title
             data_to_edit.account_type_id = account_type_id
-            data_to_edit.user_id = current_user.name
+            data_to_edit.user_id = current_user.id
             data_to_edit.date_modified = datetime.now()
             db.session.commit()
             flash(f"Edited {data_to_edit}", category="success")

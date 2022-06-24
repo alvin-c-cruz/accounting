@@ -5,12 +5,17 @@ from .models import AccountType
 from .forms import AccountTypeForm
 from accounting import db
 
+from .. user import User
+
 bp = Blueprint("account_type", __name__, template_folder="pages", url_prefix="/account_type")
 
 
 @bp.route("/<int:page>")
 @login_required
 def home(page):
+    user = User.query.get(1)
+    for account_type in user.account_types:
+        print(account_type, type(account_type))
     account_types = AccountType.query.order_by(AccountType.priority).paginate(page=page, per_page=10)
     return render_template("account_type/home.html", account_types=account_types)
 
@@ -33,7 +38,7 @@ def add():
                 account_type=account_type,
                 classification=classification,
                 priority=priority,
-                user_id=current_user.name
+                user_id=current_user.id
             )
             db.session.add(new_data)
             db.session.commit()
@@ -60,7 +65,7 @@ def edit(id):
             data_to_edit.account_type = account_type
             data_to_edit.classification = classification
             data_to_edit.priority = priority
-            data_to_edit.user_id = current_user.name
+            data_to_edit.user_id = current_user.id
             data_to_edit.date_modified = datetime.utcnow()
             db.session.commit()
             flash(f"Edited {data_to_edit}", category="success")
