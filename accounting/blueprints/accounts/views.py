@@ -25,26 +25,21 @@ def add():
     form.account_type_id.choices = account_type_choices()
 
     if form.validate_on_submit():
-        validated = True
         account_number = form.account_number.data
         account_title = form.account_title.data
         account_type_id = form.account_type_id.data
 
         if account_number == "":
             form.account_number.errors.append("Please type account number.")
-            validated = False
         elif Accounts.query.filter_by(account_number=account_number).first():
             form.account_number.errors.append("Account number is already in use.")
-            validated = False
 
         if account_title == "":
             form.account_title.errors.append("Please type account title.")
-            validated = False
         elif Accounts.query.filter_by(account_title=account_title).first():
             form.account_title.errors.append("Account title is already in use.")
-            validated = False
 
-        if validated:
+        if not form.errors:
             new_data = Accounts(
                 account_number=account_number,
                 account_title=account_title,
@@ -70,26 +65,21 @@ def edit(id):
     form = AccountsForm(obj=data_to_edit)
     form.account_type_id.choices = account_type_choices()
     if form.validate_on_submit():
-        validated = True
         account_number = form.account_number.data
         account_title = form.account_title.data
         account_type_id = form.account_type_id.data
 
         if account_number == "":
             form.account_number.errors.append("Please type account number.")
-            validated = False
         elif Accounts.query.filter(Accounts.account_number == account_number, Accounts.id != data_to_edit.id).first():
             form.account_number.errors.append("Account number is already in use.")
-            validated = False
 
         if account_title == "":
             form.account_title.errors.append("Please type account title.")
-            validated = False
         elif Accounts.query.filter(Accounts.account_title == account_title, Accounts.id != data_to_edit.id).first():
             form.account_title.errors.append("Account title is already in use.")
-            validated = False
 
-        if validated:
+        if not form.errors:
             data_to_edit.account_number = account_number
             data_to_edit.account_title = account_title
             data_to_edit.account_type_id = account_type_id

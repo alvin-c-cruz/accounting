@@ -17,7 +17,6 @@ class Disbursements(db.Model, DataModel):
     user = db.relationship('User', backref="disbursements")
 
     date_modified = db.Column(db.DateTime, nullable=True)
-    entries = db.relationship("DisbursementsEntry", backref="disbursements")
 
     def __repr__(self):
         return f"{self.disbursement_number}: {self.vendor_id}"
@@ -26,6 +25,7 @@ class Disbursements(db.Model, DataModel):
 class DisbursementsEntry(db.Model, DataModel):
     id = db.Column(db.Integer, primary_key=True)
     disbursement_id = db.Column(db.Integer, db.ForeignKey("disbursements.id"), nullable=False)
+    disbursements = db.relationship("Disbursements", backref="entries")
 
     account_id = db.Column(db.Integer, db.ForeignKey("accounts.id"), nullable=False)
     account = db.relationship("Accounts", backref="disbursementsentry")

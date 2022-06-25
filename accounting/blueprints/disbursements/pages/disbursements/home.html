@@ -34,8 +34,8 @@
             {% endif %}
         {% endfor %}
         <td>
-            {{ edit_btn(obj.edit_route, row.id) }}
-            {{ delete_btn(obj.delete_route, row.id) }}
+            {{ edit_btn("disbursements.edit", row.id) }}
+            {{ delete_btn("disbursements.delete", row.id) }}
         </td>
     </tr>
         {% endfor %}

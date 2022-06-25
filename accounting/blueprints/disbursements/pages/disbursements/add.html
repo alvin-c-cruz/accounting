@@ -10,7 +10,7 @@
     {{ form[field].label }}: {{ errors }}
 </div>
 {% endfor %}
-<form action="{{ url_for(disbursements.add) }}" method="post" class="form">
+<form action="{{ url_for('disbursements.add') }}" method="post" class="form">
     {{ form.csrf_token }}
     <div class="row">
         <div class="col-6">
@@ -20,7 +20,7 @@
             {{ date_field(form.bank_date) }}
         </div>
     </div>
-    {{ select_field(form.vendor_id, True) }}
+    {{ select_field(form.vendor_id) }}
     <div class="row">
         <div class="col-6">
             {{ string_field(form.disbursement_number) }}
