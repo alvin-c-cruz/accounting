@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, flash, redirect, url_for, send_fil
 from flask_login import login_required, current_user
 from datetime import datetime
 
-from accounting import db
+from accounting import db, incrementer
 
 from .models import Accounts
 from .forms import AccountsForm
@@ -28,7 +28,7 @@ def add():
         validated = True
         account_number = form.account_number.data
         account_title = form.account_title.data
-        account_type_id = form.account_type_id.data.id
+        account_type_id = form.account_type_id.data
 
         if account_number == "":
             form.account_number.errors.append("Please type account number.")
@@ -55,6 +55,11 @@ def add():
             db.session.commit()
             flash(f"Added {new_data}", category="success")
             return redirect(url_for('accounts.home', page=1))
+    else:
+        last_entry = Accounts.query.order_by(-Accounts.id).first()
+        if last_entry:
+            form.account_number.data = incrementer(last_entry.account_number)
+
     return render_template("accounts/add.html", form=form)
 
 
@@ -68,7 +73,7 @@ def edit(id):
         validated = True
         account_number = form.account_number.data
         account_title = form.account_title.data
-        account_type_id = form.account_type_id.data.id
+        account_type_id = form.account_type_id.data
 
         if account_number == "":
             form.account_number.errors.append("Please type account number.")
@@ -114,6 +119,6 @@ def export():
 
 
 def account_type_choices():
-    data = AccountType.query.order_by(AccountType.priority).all()
-    data.insert(0, "")
+    data = [(row.id, row) for row in AccountType.query.order_by(AccountType.priority).all()]
+    data.insert(0, ("", ""))
     return data
