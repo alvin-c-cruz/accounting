@@ -1,6 +1,5 @@
 from accounting import db
 from .. data_model import DataModel
-from datetime import datetime
 
 
 class Vendors(db.Model, DataModel):
@@ -8,7 +7,7 @@ class Vendors(db.Model, DataModel):
     vendor_tin = db.Column(db.String(16), unique=True, nullable=True)
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    user = db.relationship('User', backref="vendors", lazy="joined")
+    user = db.relationship('User', backref="vendors")
 
     date_modified = db.Column(db.DateTime, nullable=True)
 
