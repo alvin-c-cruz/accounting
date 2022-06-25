@@ -3,6 +3,7 @@ from .. data_model import DataModel
 
 
 class Vendors(db.Model, DataModel):
+    id = db.Column(db.Integer, primary_key=True)
     vendor_name = db.Column(db.String(64), unique=True, nullable=False)
     vendor_tin = db.Column(db.String(16), unique=True, nullable=True)
 

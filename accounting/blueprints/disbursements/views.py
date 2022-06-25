@@ -12,33 +12,29 @@ bp = Blueprint("disbursements", __name__, template_folder="pages", url_prefix="/
 @bp.route("/<int:page>")
 @login_required
 def home(page):
-    obj = Disbursements()
-    data = Disbursements.query.order_by(Disbursements.disbursement_number).paginate(page=page, per_page=10)
-    return render_template(
-        obj.home_html,
-        obj=obj,
-        data=data,
-        columns=[
+    context = {
+        "data": Disbursements.query.order_by(Disbursements.disbursement_number).paginate(page=page, per_page=10),
+        "columns": [
             {"label": "Record Date", "key": "record_date"},
             {"label": "Bank Date", "key": "bank_date"},
             {"label": "CD Number", "key": "disbursement_number"},
             {"label": "Check Number", "key": "check_number"},
             {"label": "Vendor", "key": "vendor_id"},
         ]
-    )
+    }
+    return render_template("disbursements/home.html", **context)
 
 
 @bp.route("/add", methods=["GET", "POST"])
 @login_required
 def add():
-    obj = Disbursements()
     form = DisbursementsForm()
     form.vendor_id.choices = vendor_choices()
     for entry in form.entries:
         entry.account_id.choices = account_choices()
 
     if form.validate_on_submit():
-        new_data = obj
+        new_data = Disbursements()
         new_data.data(form)
         new_data.user_id = current_user.name
         new_data.save_and_commit()

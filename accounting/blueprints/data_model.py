@@ -5,8 +5,6 @@ from flask import current_app
 
 
 class DataModel:
-    id = db.Column(db.Integer, primary_key=True)
-
     def data(self, form):
         columns = self.__table__.columns.keys()
         for column in columns:
