@@ -47,15 +47,15 @@ def add():
             new_entry.save_and_commit()
 
         flash(f"Added {new_data}", category="success")
-        return redirect(url_for(obj.home_route, page=1))
+        return redirect(url_for("disbursements.home", page=1))
 
     else:
         form.record_date.data = datetime.today()
-    return render_template(
-        obj.add_html,
-        obj=obj,
-        form=form
-    )
+
+    context = {
+        "form": form
+    }
+    return render_template("disbursements/add.html", **context)
 
 
 @bp.route("/edit/<id>", methods=["GET", "POST"])
@@ -105,8 +105,8 @@ def export():
 
 
 def vendor_choices():
-    data = Vendors.query.order_by(Vendors.vendor_name).all()
-    data.insert(0, "")
+    data = [(row.id, row.vendor_name) for row in Vendors.query.order_by(Vendors.vendor_name).all()]
+    data.insert(0, ("", ""))
     return data
 
 
