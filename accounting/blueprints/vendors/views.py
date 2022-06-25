@@ -24,13 +24,33 @@ def home(page):
 def add():
     form = VendorsForm()
     if form.validate_on_submit():
-        new_data = Vendors()
-        new_data.data(form)
-        new_data.user_id = current_user.name
-        db.session.add(new_data)
-        db.session.commit()
-        flash(f"Added {new_data}", category="success")
-        return redirect(url_for("vendors.home", page=1))
+        validated = True
+        vendor_name = form.vendor_name.data
+        vendor_tin = form.vendor_tin.data
+
+        if vendor_name == "":
+            form.vendor_name.errors.append("Please type vendor name.")
+            validated = False
+        elif Vendors.query.filter_by(vendor_name=vendor_name).first():
+            form.vendor_name.errors.append("Vendor name is already used.")
+            validated = False
+
+        if Vendors.query.filter_by(vendor_tin=vendor_tin).first() and vendor_tin:
+            form.vendor_tin.errors.append("TIN is already used.")
+            validated = False
+
+        if validated:
+            new_data = Vendors(
+
+            )
+            new_data.vendor_name = vendor_name
+            new_data.vendor_tin = vendor_tin
+            new_data.user_id = current_user.id
+            db.session.add(new_data)
+            db.session.commit()
+            flash(f"Added {new_data}", category="success")
+            return redirect(url_for("vendors.home", page=1))
+
     return render_template("vendors/add.html", form=form)
 
 
@@ -40,11 +60,30 @@ def edit(id):
     data_to_edit = Vendors.query.get(id)
     form = VendorsForm(obj=data_to_edit)
     if form.validate_on_submit():
-        data_to_edit.data(form)
-        data_to_edit.date_modified = datetime.now()
-        db.session.commit()
-        flash(f"Edited {data_to_edit}", category="success")
-        return redirect(url_for("vendors.home", page=1))
+        validated = True
+        vendor_name = form.vendor_name.data
+        vendor_tin = form.vendor_tin.data
+
+        if vendor_name == "":
+            form.vendor_name.errors.append("Please type vendor name.")
+            validated = False
+        elif Vendors.query.filter(Vendors.vendor_name == vendor_name, Vendors.id != data_to_edit.id).first():
+            form.vendor_name.errors.append("Vendor name is already used.")
+            validated = False
+
+        if Vendors.query.filter(Vendors.vendor_tin == vendor_tin, Vendors.id != data_to_edit.id).first() \
+                and vendor_tin:
+            form.vendor_tin.errors.append("TIN is already used.")
+            validated = False
+
+        if validated:
+            data_to_edit.vendor_name = vendor_name
+            data_to_edit.vendor_tin = vendor_tin
+            data_to_edit.user_id = current_user.id
+            data_to_edit.date_modified = datetime.now()
+            db.session.commit()
+            flash(f"Edited {data_to_edit}", category="success")
+            return redirect(url_for("vendors.home", page=1))
     return render_template("vendors/edit.html", form=form, id=id)
 
 

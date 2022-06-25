@@ -14,7 +14,7 @@
     {{ form.csrf_token }}
     <div class="row">
         <div class="col-6">
-            {{ date_field(form.record_date, True) }}
+            {{ date_field(form.record_date) }}
         </div>
         <div class="col-6">
             {{ date_field(form.bank_date) }}
@@ -23,10 +23,10 @@
     {{ select_field(form.vendor_id, True) }}
     <div class="row">
         <div class="col-6">
-            {{ string_field(form.disbursement_number, True) }}
+            {{ string_field(form.disbursement_number) }}
         </div>
         <div class="col-6">
-            {{ string_field(form.check_number, True) }}
+            {{ string_field(form.check_number) }}
         </div>
     </div>
     {{ textarea_field(form.notes) }}
