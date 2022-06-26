@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "macros.html" import string_field, select_field, date_field, textarea_field, entry_string_field, entry_select_field, submit_field, delete_btn %}
+{% from "macros.html" import string_field, select_field, date_field, textarea_field, entry_string_field, entry_number_field, entry_select_field, submit_field, delete_btn %}
 
 {% block title %}Add Disbursement{% endblock %}
 
@@ -41,8 +41,8 @@
     {% for entry in form.entries %}
         <tr>
             <td>{{ entry_select_field(entry.account_id) }}</td>
-            <td>{{ entry_string_field(entry.debit) }}</td>
-            <td>{{ entry_string_field(entry.credit) }}</td>
+            <td>{{ entry_number_field(entry.debit) }}</td>
+            <td>{{ entry_number_field(entry.credit) }}</td>
             <td>
                 {{ entry_string_field(entry.notes) }}
                 {{ entry.csrf_token}}

@@ -63,6 +63,12 @@
     </div>
 {% endmacro %}
 
+{% macro entry_number_field(field) %}
+    <div class="form-group">
+        {{ field(class="form-control", style="text-align:right;", autocomplete="off", value="{:,.2f}".format(field.data|float)) }}
+    </div>
+{% endmacro %}
+
 {% macro entry_select_field(field) %}
     <div class="form-group">
         {{ field(class="form-select") }}

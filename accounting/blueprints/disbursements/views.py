@@ -15,6 +15,9 @@ bp = Blueprint("disbursements", __name__, template_folder="pages", url_prefix="/
 @bp.route("/<int:page>")
 @login_required
 def home(page):
+    cd = DisbursementsEntry.query.count()
+    print(cd)
+
     context = {
         "data": Disbursements.query.order_by(Disbursements.disbursement_number).paginate(page=page, per_page=10),
         "columns": [
@@ -136,10 +139,10 @@ def edit(id):
                     else:
                         for data in data_to_edit.entries:
                             if data.entry_id == int(entry_id):
-                                data.account_id = entry.account_id.data
-                                data.debit = entry.debit.data
-                                data.credit = entry.credit.data
-                                data.notes = entry.notes.data
+                                data.account_id = account_id
+                                data.debit = debit
+                                data.credit = credit
+                                data.notes = notes
                                 break
                 else:
                     if not account_id and not notes and debit - credit == 0:
@@ -147,12 +150,15 @@ def edit(id):
 
                     new_entry = DisbursementsEntry(
                         disbursement_id=data_to_edit.id,
-                        account_id=entry.account_id.data,
-                        debit=entry.debit.data,
-                        credit=entry.credit.data,
-                        notes=entry.notes.data
+                        account_id=account_id,
+                        debit=debit,
+                        credit=credit,
+                        notes=notes
                     )
                     data_to_edit.entries.append(new_entry)
+
+            for entry in for_deletion:
+                db.session.delete(entry)
 
             db.session.commit()
             flash(f"Edited {data_to_edit}", category="success")
@@ -168,16 +174,16 @@ def edit(id):
 @bp.route("/delete/<id>", methods=["GET", "POST"])
 @login_required
 def delete(id):
-    obj = Disbursements()
-    data_to_delete = Disbursements.query.get(id)
-    entry_to_delete = DisbursementsEntry.query.filter_by(disbursement_id=data_to_delete.__repr__()).all()
-    for entry in entry_to_delete:
-        entry.delete_and_commit()
+    data_to_delete = Disbursements.query.get_or_404(id)
 
-    data_to_delete.delete_and_commit()
+    for entry in data_to_delete.entries:
+        db.session.delete(entry)
+
+    db.session.delete(data_to_delete)
+    db.session.commit()
 
     flash(f"Deleted {data_to_delete}", category="success")
-    return redirect(url_for(obj.home_route, page=1))
+    return redirect(url_for("disbursements.home", page=1))
 
 
 @bp.route("/export")
@@ -240,8 +246,9 @@ def validate(form, id=None):
 
 
 def to_float(data):
-    if data is None:
+    if data is None or data == "":
         return 0
 
     data = data.replace(",", "")
+    data = data.replace("-", "")
     return float(data)
