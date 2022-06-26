@@ -15,8 +15,8 @@ bp = Blueprint("disbursements", __name__, template_folder="pages", url_prefix="/
 @bp.route("/<int:page>")
 @login_required
 def home(page):
-    cd = DisbursementsEntry.query.count()
-    print(cd)
+    cd = Disbursements.query.get(1)
+    print(cd.cash_total)
 
     context = {
         "data": Disbursements.query.order_by(Disbursements.disbursement_number).paginate(page=page, per_page=10),
@@ -57,7 +57,7 @@ def add():
 
         if not check_number:
             form.check_number.errors.append("Please type check number.")
-        elif Disbursements.query.filter(Disbursements.check_number==check_number).first():
+        elif Disbursements.query.filter(Disbursements.check_number == check_number).first():
             form.check_number.errors.append("Check number is already used.")
 
         if not vendor_id:

@@ -10,9 +10,12 @@
 
 <table class="table table-striped table-dark">
     <tr>
-        {% for column in columns %}
-        <th>{{ column['label']  }}</th>
-        {% endfor %}
+        <th>Record Date</th>
+        <th>Bank Date</th>
+        <th>CD Number</th>
+        <th>Check Number</th>
+        <th>Vendor</th>
+        <th>Amount</th>
         <th>Actions</th>
     </tr>
     {% if not data %}
@@ -22,17 +25,20 @@
     {% else %}
         {% for row in data.items %}
     <tr>
-        {% for column in columns %}
-            {% if 'date' in column['key'] %}
         <td>
-            {% if row[column['key']] %}
-            {{ row[column['key']].strftime('%Y-%b-%d')  }}
+            {{ row.record_date.strftime('%Y-%b-%d')  }}
+        </td>
+        <td>
+            {% if row.bank_date %}
+            {{ row.bank_date.strftime('%Y-%b-%d')  }}
             {% endif %}
         </td>
-            {% else %}
-        <td>{{ row[column['key']]  }}</td>
-            {% endif %}
-        {% endfor %}
+        <td>{{ row.disbursement_number  }}</td>
+        <td>{{ row.check_number }}</td>
+        <td>{{ row.vendor.vendor_name }}</td>
+        <td>
+            {{ row.cash_total() }}
+        </td>
         <td>
             {{ edit_btn("disbursements.edit", row.id) }}
             {{ delete_btn("disbursements.delete", row.id) }}

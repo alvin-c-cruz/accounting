@@ -1,7 +1,9 @@
 from accounting import db
+from dataclasses import dataclass
 from .. data_model import DataModel
 
 
+@dataclass
 class Disbursements(db.Model, DataModel):
     id = db.Column(db.Integer, primary_key=True)
     record_date = db.Column(db.DateTime, nullable=False)
@@ -18,8 +20,18 @@ class Disbursements(db.Model, DataModel):
 
     date_modified = db.Column(db.DateTime, nullable=True)
 
+    def cash_total(self):
+        if self.id:
+            total = 0
+            for entry in self.entries:
+                if entry.account.account_type.account_type == "Cash and Cash Equivalent":
+                    total += entry.credit
+            return "{:,.2f}".format(total)
+        else:
+            return "0.00"
+
     def __repr__(self):
-        return f"{self.disbursement_number}: {self.vendor_id}"
+        return f"{self.disbursement_number}: {self.vendor.vendor_name}"
 
 
 class DisbursementsEntry(db.Model, DataModel):
