@@ -1,9 +1,10 @@
-from flask_wtf import FlaskForm
-from wtforms import StringField, DateField, TextAreaField, SelectField, SubmitField, FormField, FieldList
+from flask_wtf import FlaskForm, Form
+from wtforms import StringField, DateField, TextAreaField, SelectField, SubmitField, FormField, FieldList, HiddenField
 from wtforms.validators import DataRequired, optional
 
 
-class DisbursementsEntryForm(FlaskForm):
+class DisbursementsEntryForm(Form):
+    entry_id = HiddenField(label="id")
     disbursement_id = StringField(label="Disbursement ID")
     account_id = SelectField(label="Account Title")
     debit = StringField(label="Debit", default="0.00")

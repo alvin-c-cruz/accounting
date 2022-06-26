@@ -50,7 +50,7 @@ def add():
 @bp.route("/edit/<id>", methods=["GET", "POST"])
 @login_required
 def edit(id):
-    data_to_edit = AccountType.query.get(id)
+    data_to_edit = AccountType.query.get_or_404(id)
     form = AccountTypeForm(obj=data_to_edit)
     if form.validate_on_submit():
         account_type = form.account_type.data
@@ -76,7 +76,7 @@ def edit(id):
 @bp.route("/delete/<id>", methods=["GET", "POST"])
 @login_required
 def delete(id):
-    data_to_delete = AccountType.query.get(id)
+    data_to_delete = AccountType.query.get_or_404(id)
     db.session.delete(data_to_delete)
     db.session.commit()
     flash(f"Deleted {data_to_delete}", category="success")

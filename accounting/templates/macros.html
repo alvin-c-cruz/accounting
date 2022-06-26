@@ -58,13 +58,13 @@
 {% endmacro %}
 
 {% macro entry_string_field(field) %}
-    <div class="form-group mt-2 mb-2">
+    <div class="form-group">
         {{ field(class="form-control", style="text-align:right;", autocomplete="off") }}
     </div>
 {% endmacro %}
 
 {% macro entry_select_field(field) %}
-    <div class="form-group mt-2 mb-2">
+    <div class="form-group">
         {{ field(class="form-select") }}
     </div>
 {% endmacro %}

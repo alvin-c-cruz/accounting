@@ -37,17 +37,15 @@
             <th>Debit</th>
             <th>Credit</th>
             <th>Notes</th>
-            <th>Actions</th>
         </tr>
     {% for entry in form.entries %}
         <tr>
             <td>{{ entry_select_field(entry.account_id) }}</td>
             <td>{{ entry_string_field(entry.debit) }}</td>
             <td>{{ entry_string_field(entry.credit) }}</td>
-            <td>{{ entry_string_field(entry.notes) }}</td>
             <td>
+                {{ entry_string_field(entry.notes) }}
                 {{ entry.csrf_token}}
-                <a href="#" class="btn btn-danger mt-2 mb-2">-</a>
             </td>
         </tr>
     {% endfor %}

@@ -9,19 +9,19 @@
     {{ form.csrf_token }}
     <div class="row">
         <div class="col-6">
-            {{ date_field(form.record_date, True) }}
+            {{ date_field(form.record_date) }}
         </div>
         <div class="col-6">
             {{ date_field(form.bank_date) }}
         </div>
     </div>
-    {{ select_field(form.vendor_id, True) }}
+    {{ select_field(form.vendor_id) }}
     <div class="row">
         <div class="col-6">
-            {{ string_field(form.disbursement_number, True) }}
+            {{ string_field(form.disbursement_number) }}
         </div>
         <div class="col-6">
-            {{ string_field(form.check_number, True) }}
+            {{ string_field(form.check_number) }}
         </div>
     </div>
     {{ textarea_field(form.notes) }}
@@ -31,17 +31,15 @@
             <th>Debit</th>
             <th>Credit</th>
             <th>Notes</th>
-            <th>Actions</th>
         </tr>
     {% for entry in form.entries %}
         <tr>
             <td>{{ entry_select_field(entry.account_id) }}</td>
             <td>{{ entry_string_field(entry.debit) }}</td>
             <td>{{ entry_string_field(entry.credit) }}</td>
-            <td>{{ entry_string_field(entry.notes) }}</td>
             <td>
+                {{ entry_string_field(entry.notes) }}
                 {{ entry.csrf_token}}
-                <a href="#" class="btn btn-danger mt-2 mb-2">-</a>
             </td>
         </tr>
     {% endfor %}

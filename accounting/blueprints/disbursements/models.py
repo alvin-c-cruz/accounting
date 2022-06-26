@@ -23,7 +23,7 @@ class Disbursements(db.Model, DataModel):
 
 
 class DisbursementsEntry(db.Model, DataModel):
-    id = db.Column(db.Integer, primary_key=True)
+    entry_id = db.Column(db.Integer, primary_key=True)
     disbursement_id = db.Column(db.Integer, db.ForeignKey("disbursements.id"), nullable=False)
     disbursements = db.relationship("Disbursements", backref="entries")
 
