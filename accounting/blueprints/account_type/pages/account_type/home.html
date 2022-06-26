@@ -6,7 +6,9 @@
 {% block content %}
 <h1>Account Types</h1>
 {{ add_btn("account_type.add", "Add Account Type") }}
-{{ add_btn("account_type.export", "Export") }}
+{% if current_user.admin %}
+    {{ add_btn("account_type.export", "Export") }}
+{% endif %}
 <table class="table table-striped table-dark">
     <tr>
         <th>Description</th>

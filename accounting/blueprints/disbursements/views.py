@@ -186,14 +186,6 @@ def delete(id):
     return redirect(url_for("disbursements.home", page=1))
 
 
-@bp.route("/export")
-@login_required
-def export():
-    obj = Disbursements()
-    filename = obj.export()
-    return send_file('{}'.format(filename), as_attachment=True, cache_timeout=0)
-
-
 def vendor_choices():
     data = [(row.id, row.vendor_name) for row in Vendors.query.order_by(Vendors.vendor_name).all()]
     data.insert(0, ("", ""))

@@ -6,8 +6,9 @@
 {% block content %}
 <h1>Vendors</h1>
 {{ add_btn('vendors.add', "Add Vendor") }}
-{{ add_btn('vendors.export', "Export") }}
-
+{% if current_user.admin %}
+    {{ add_btn('vendors.export', "Export") }}
+{% endif %}
 <table class="table table-striped table-dark">
     <tr>
         {% for column in columns %}
