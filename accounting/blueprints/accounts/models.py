@@ -17,3 +17,8 @@ class Accounts(db.Model, DataModel):
 
     def __repr__(self):
         return f"{self.account_number}: {self.account_title}"
+
+    def choices(self):
+        data = [(row.id, row) for row in self.query.order_by(self.account_number).all()]
+        data.insert(0, ("", ""))
+        return data

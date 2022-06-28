@@ -37,7 +37,7 @@ def add():
     form = DisbursementsForm()
     form.vendor_id.choices = vendor_choices()
     for entry in form.entries:
-        entry.account_id.choices = account_choices()
+        entry.account_id.choices = Accounts().choices()
 
     if form.validate_on_submit():
         record_date = form.record_date.data
@@ -188,12 +188,6 @@ def delete(id):
 
 def vendor_choices():
     data = [(row.id, row.vendor_name) for row in Vendors.query.order_by(Vendors.vendor_name).all()]
-    data.insert(0, ("", ""))
-    return data
-
-
-def account_choices():
-    data = [(row.id, row) for row in Accounts.query.order_by(Accounts.account_number).all()]
     data.insert(0, ("", ""))
     return data
 
