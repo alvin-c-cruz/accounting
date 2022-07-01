@@ -16,7 +16,7 @@ bp = Blueprint("disbursements", __name__, template_folder="pages", url_prefix="/
 @login_required
 def home(page):
     context = {
-        "data": Disbursements.query.order_by(Disbursements.disbursement_number).paginate(page=page, per_page=10),
+        "data": Disbursements.query.order_by(Disbursements.disbursement_number.desc()).paginate(page=page, per_page=10),
         "columns": [
             {"label": "Record Date", "key": "record_date"},
             {"label": "Bank Date", "key": "bank_date"},
