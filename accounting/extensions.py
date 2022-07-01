@@ -32,3 +32,24 @@ def incrementer(data):
             len(proper_number), '0')
     else:
         return data + "1"
+
+
+def to_float(data):
+    if type(data) in (int, float):
+        return data
+    elif type(data) is str:
+        data = data.replace(",", "")
+        data = data.replace("-", "")
+        return round(float(data),2)
+    else:
+        return 0
+
+
+def balance_check(entries):
+    total_debit = 0
+    total_credit = 0
+    for entry in entries:
+        total_debit += to_float(entry.debit.data)
+        total_credit += to_float(entry.credit.data)
+
+    return round(total_debit, 2), round(total_credit, 2)

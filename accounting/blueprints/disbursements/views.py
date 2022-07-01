@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, send_fil
 from flask_login import login_required, current_user
 from datetime import datetime
 
-from accounting import db, incrementer
+from accounting import db, incrementer, to_float, balance_check
 
 from .models import Disbursements, DisbursementsEntry
 from .forms import DisbursementsForm
@@ -220,22 +220,3 @@ def validate(form, id=None):
             form.check_number.errors.append("Check number is already used.")
 
 
-def to_float(data):
-    if type(data) in (int, float):
-        return data
-    elif type(data) is str:
-        data = data.replace(",", "")
-        data = data.replace("-", "")
-        return round(float(data),2)
-    else:
-        return 0
-
-
-def balance_check(entries):
-    total_debit = 0
-    total_credit = 0
-    for entry in entries:
-        total_debit += to_float(entry.debit.data)
-        total_credit += to_float(entry.credit.data)
-
-    return round(total_debit, 2), round(total_credit, 2)
