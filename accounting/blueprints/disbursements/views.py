@@ -40,37 +40,16 @@ def add():
         entry.account_id.choices = Accounts().choices()
 
     if form.validate_on_submit():
-        record_date = form.record_date.data
-        bank_date = form.bank_date.data
-        disbursement_number = form.disbursement_number.data
-        check_number = form.check_number.data
-        notes = form.notes.data
-        vendor_id = form.vendor_id.data
-
-        if not record_date:
-            form.record_date.errors.append("Please type record date.")
-
-        if not disbursement_number:
-            form.disbursement_number.errors.append("Please type CD number.")
-        elif Disbursements.query.filter(Disbursements.disbursement_number==disbursement_number).first():
-            form.disbursement_number.errors.append("CD number is already used.")
-
-        if not check_number:
-            form.check_number.errors.append("Please type check number.")
-        elif Disbursements.query.filter(Disbursements.check_number == check_number).first():
-            form.check_number.errors.append("Check number is already used.")
-
-        if not vendor_id:
-            form.vendor_id.errors.append("Please select a vendor.")
+        validate(form)
 
         if not form.errors:
             new_data = Disbursements(
-                record_date=record_date,
-                bank_date=bank_date,
-                disbursement_number=disbursement_number,
-                check_number=check_number,
-                notes=notes,
-                vendor_id=vendor_id,
+                record_date=form.record_date.data,
+                bank_date=form.bank_date.data,
+                disbursement_number=form.disbursement_number.data,
+                check_number=form.check_number.data,
+                notes=form.notes.data,
+                vendor_id=form.vendor_id.data,
                 user_id=current_user.id
             )
 
@@ -80,23 +59,29 @@ def add():
                 new_entry = DisbursementsEntry(
                     disbursement_id=new_data.id,
                     account_id=entry.account_id.data,
-                    debit=entry.debit.data,
-                    credit=entry.credit.data,
+                    debit=to_float(entry.debit.data),
+                    credit=to_float(entry.credit.data),
                     notes=entry.notes.data
                 )
                 new_data.entries.append(new_entry)
 
-            db.session.add(new_data)
-            db.session.commit()
-
-            flash(f"Added {new_data}", category="success")
-            return redirect(url_for("disbursements.home", page=1))
+            total_debit, total_credit = balance_check(form.entries)
+            if total_debit == total_credit:
+                db.session.add(new_data)
+                db.session.commit()
+                flash(f"Added {new_data}", category="success")
+                return redirect(url_for("disbursements.home", page=1))
+            else:
+                total_debit = "{:,.2f}".format(total_debit)
+                total_credit = "{:,.2f}".format(total_credit)
+                flash(f"Entry not balanced. Debit [{total_debit}], Credit [{total_credit}]", category="error")
 
     else:
         form.record_date.data = datetime.today()
         last_entry = Disbursements.query.order_by(-Disbursements.id).first()
         if last_entry:
             form.disbursement_number.data = incrementer(last_entry.disbursement_number)
+            form.check_number.data = incrementer(last_entry.check_number)
 
     context = {
         "form": form
@@ -111,7 +96,7 @@ def edit(id):
     form = DisbursementsForm(obj=data_to_edit)
     form.vendor_id.choices = vendor_choices()
     for entry in form.entries:
-        entry.account_id.choices = account_choices()
+        entry.account_id.choices = Accounts().choices()
     if form.validate_on_submit():
         validate(form, id)
 
@@ -129,8 +114,11 @@ def edit(id):
                 credit = to_float(entry.credit.data)
                 notes = entry.notes.data
 
+                print(i, debit, credit)
+                breakpoint()
+
                 if entry_id:
-                    if not account_id and not notes and debit - credit == 0:
+                    if not account_id and not notes and debit == 0 and credit == 0:
                         for data in data_to_edit.entries:
                             if data.entry_id == int(entry_id):
                                 for_deletion.append(data)
@@ -140,19 +128,19 @@ def edit(id):
                         for data in data_to_edit.entries:
                             if data.entry_id == int(entry_id):
                                 data.account_id = account_id
-                                data.debit = debit
-                                data.credit = credit
+                                data.debit = to_float(debit)
+                                data.credit = to_float(credit)
                                 data.notes = notes
                                 break
                 else:
-                    if not account_id and not notes and debit - credit == 0:
+                    if not account_id and not notes and debit == 0 and credit == 0:
                         continue
 
                     new_entry = DisbursementsEntry(
                         disbursement_id=data_to_edit.id,
                         account_id=account_id,
-                        debit=debit,
-                        credit=credit,
+                        debit=to_float(debit),
+                        credit=to_float(credit),
                         notes=notes
                     )
                     data_to_edit.entries.append(new_entry)
@@ -160,14 +148,23 @@ def edit(id):
             for entry in for_deletion:
                 db.session.delete(entry)
 
-            db.session.commit()
-            flash(f"Edited {data_to_edit}", category="success")
-            return redirect(url_for("disbursements.home", page=1))
+            total_debit, total_credit = balance_check(form.entries)
+            if total_debit == total_credit:
+                db.session.commit()
+                flash(f"Edited {data_to_edit}", category="success")
+                return redirect(url_for("disbursements.home", page=1))
+            else:
+                total_debit = "{:,.2f}".format(total_debit)
+                total_credit = "{:,.2f}".format(total_credit)
+                flash(f"Entry not balanced. Debit [{total_debit}], Credit [{total_credit}]", category="error")
 
     context = {
         "form": form,
         "id": id
     }
+    for entry in data_to_edit.entries:
+        print(entry.account, entry.debit, entry.credit)
+
     return render_template("disbursements/edit.html", **context)
 
 
@@ -235,6 +232,21 @@ def to_float(data):
     if data is None or data == "":
         return 0
 
+    if type(data) in (int, float):
+        return data
+
     data = data.replace(",", "")
     data = data.replace("-", "")
-    return float(data)
+    data = float(data)
+
+    return data
+
+
+def balance_check(entries):
+    total_debit = 0
+    total_credit = 0
+    for entry in entries:
+        total_debit += to_float(entry.debit.data)
+        total_credit += to_float(entry.credit.data)
+
+    return round(total_debit, 2), round(total_credit, 2)
