@@ -15,9 +15,6 @@ bp = Blueprint("disbursements", __name__, template_folder="pages", url_prefix="/
 @bp.route("/<int:page>")
 @login_required
 def home(page):
-    cd = Disbursements.query.get(1)
-    print(cd.cash_total)
-
     context = {
         "data": Disbursements.query.order_by(Disbursements.disbursement_number).paginate(page=page, per_page=10),
         "columns": [
@@ -114,9 +111,6 @@ def edit(id):
                 credit = to_float(entry.credit.data)
                 notes = entry.notes.data
 
-                print(i, debit, credit)
-                breakpoint()
-
                 if entry_id:
                     if not account_id and not notes and debit == 0 and credit == 0:
                         for data in data_to_edit.entries:
@@ -162,8 +156,6 @@ def edit(id):
         "form": form,
         "id": id
     }
-    for entry in data_to_edit.entries:
-        print(entry.account, entry.debit, entry.credit)
 
     return render_template("disbursements/edit.html", **context)
 
@@ -229,17 +221,14 @@ def validate(form, id=None):
 
 
 def to_float(data):
-    if data is None or data == "":
-        return 0
-
     if type(data) in (int, float):
         return data
-
-    data = data.replace(",", "")
-    data = data.replace("-", "")
-    data = float(data)
-
-    return data
+    elif type(data) is str:
+        data = data.replace(",", "")
+        data = data.replace("-", "")
+        return round(float(data),2)
+    else:
+        return 0
 
 
 def balance_check(entries):

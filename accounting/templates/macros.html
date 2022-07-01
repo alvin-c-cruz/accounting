@@ -65,8 +65,7 @@
 
 {% macro entry_number_field(field) %}
     <div class="form-group">
-        {{ field.data }}
-        {{ field(class="form-control", style="text-align:right;", autocomplete="off", value="{:,.2f}".format(field.data|float)) }}
+        {{ field(class="form-control", style="text-align:right;", autocomplete="off", value=field.data) }}
     </div>
 {% endmacro %}
 

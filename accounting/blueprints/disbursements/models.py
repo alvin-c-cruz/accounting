@@ -27,7 +27,7 @@ class Disbursements(db.Model, DataModel):
         if self.id:
             total = 0
             for entry in self.entries:
-                if entry.account.account_type.account_type == "Cash and Cash Equivalent":
+                if entry.account.account_type.account_type == "Cash and Cash Equivalents":
                     total += entry.credit
             return "{:,.2f}".format(total)
         else:
