@@ -1,11 +1,30 @@
 {% extends "base.html" %}
-{% from "macros.html" import add_btn, edit_btn, delete_btn, render_pagination %}
+{% from "macros.html" import date_field, add_btn, edit_btn, delete_btn, render_pagination %}
 
 {% block title %}Disbursements{% endblock %}
 
 {% block content %}
 <h1>Disbursements</h1>
-{{ add_btn("disbursements.add", "Add Disbursement") }}
+<div class="row">
+    <div class="col">
+        <form class="form" method="post" action="{{ url_for('disbursements.home', page=1) }}">
+            {{ journal_form.csrf_token }}
+            {{ journal_form.date_from.label }}
+            {{ journal_form.date_from }}
+
+            {{ journal_form.date_to.label }}
+            {{ journal_form.date_to }}
+
+            {{ journal_form.submit }}
+        </form>
+
+    </div>
+    <div class="col text-end">
+        {{ add_btn("disbursements.add", "Add Disbursement") }}
+    </div>
+</div>
+
+
 
 <table class="table table-striped table-dark">
     <tr>

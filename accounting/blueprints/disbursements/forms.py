@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm, Form
 from wtforms import StringField, DateField, TextAreaField, SelectField, SubmitField, FormField, FieldList, HiddenField, DecimalRangeField
 from wtforms.validators import DataRequired, optional
+from datetime import datetime
 
 
 class DisbursementsEntryForm(Form):
@@ -25,3 +26,8 @@ class DisbursementsForm(FlaskForm):
     submit = SubmitField(label="Save")
 
 
+class JournalDateRange(FlaskForm):
+    date_from = DateField(label="From")
+    date_to = DateField(label="To")
+
+    submit = SubmitField(label="Download Journal")

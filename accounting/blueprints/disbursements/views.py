@@ -1,20 +1,33 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, send_file, jsonify
 from flask_login import login_required, current_user
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from accounting import db, incrementer, to_float, balance_check
 
 from .models import Disbursements, DisbursementsEntry
-from .forms import DisbursementsForm
+from .forms import DisbursementsForm, JournalDateRange
 from .. vendors import Vendors
 from .. accounts import Accounts
 
 bp = Blueprint("disbursements", __name__, template_folder="pages", url_prefix="/disbursements")
 
 
-@bp.route("/<int:page>")
+@bp.route("/<int:page>", methods=["GET", "POST"])
 @login_required
 def home(page):
+    journal_form = JournalDateRange()
+
+    if journal_form.validate_on_submit():
+        flash("Disbursement journal downloaded.", category="success")
+    else:
+        today = datetime.utcnow()
+        first_day = datetime(today.year, today.month, 1)
+        last_day = datetime(today.year, today.month + 1, 1) if today.month != 12 else datetime(today.year + 1, 1, 1)
+        last_day -= timedelta(days=1)
+
+        journal_form.date_from.data = first_day
+        journal_form.date_to.data = last_day
+
     context = {
         "data": Disbursements.query.order_by(Disbursements.disbursement_number.desc()).paginate(page=page, per_page=10),
         "columns": [
@@ -23,7 +36,8 @@ def home(page):
             {"label": "CD Number", "key": "disbursement_number"},
             {"label": "Check Number", "key": "check_number"},
             {"label": "Vendor", "key": "vendor"},
-        ]
+        ],
+        "journal_form": journal_form
     }
     return render_template("disbursements/home.html", **context)
 
@@ -218,5 +232,3 @@ def validate(form, id=None):
             form.check_number.errors.append("Please type check number.")
         elif Disbursements.query.filter(Disbursements.check_number == check_number).first():
             form.check_number.errors.append("Check number is already used.")
-
-
