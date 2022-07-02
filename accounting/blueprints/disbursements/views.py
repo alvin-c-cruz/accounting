@@ -1,11 +1,15 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, send_file, jsonify
+from flask import Blueprint, render_template, redirect, url_for, flash, send_file, current_app
 from flask_login import login_required, current_user
 from datetime import datetime, timedelta
+from sqlalchemy import and_
+
 
 from accounting import db, incrementer, to_float, balance_check
 
 from .models import Disbursements, DisbursementsEntry
 from .forms import DisbursementsForm, JournalDateRange
+from .extentions import create_journal
+
 from .. vendors import Vendors
 from .. accounts import Accounts
 
@@ -16,11 +20,32 @@ bp = Blueprint("disbursements", __name__, template_folder="pages", url_prefix="/
 @login_required
 def home(page):
     journal_form = JournalDateRange()
-
     if journal_form.validate_on_submit():
-        flash("Disbursement journal downloaded.", category="success")
+        date_from = journal_form.date_from.data
+        date_to = journal_form.date_to.data
+
+        if date_from is None:
+            flash("Beginning date is required.", category="error")
+
+        elif date_to is None:
+            flash("Ending date is required.", category="error")
+
+        elif date_from > date_to:
+            flash("Beginning date cannot be later than ending date.", category="error")
+
+        else:
+            date_from = datetime(date_from.year, date_from.month, date_from.day)
+            date_to = datetime(date_to.year, date_to.month, date_to.day)
+
+            data = Disbursements.query.filter(
+                Disbursements.record_date >= date_from, Disbursements.record_date <= date_to
+                ).order_by(Disbursements.disbursement_number).all()
+
+            filename = create_journal(data, current_app, date_from, date_to)
+            return send_file('{}'.format(filename), as_attachment=True, cache_timeout=0)
+
     else:
-        today = datetime.utcnow()
+        today = datetime.today()
         first_day = datetime(today.year, today.month, 1)
         last_day = datetime(today.year, today.month + 1, 1) if today.month != 12 else datetime(today.year + 1, 1, 1)
         last_day -= timedelta(days=1)
@@ -232,3 +257,5 @@ def validate(form, id=None):
             form.check_number.errors.append("Please type check number.")
         elif Disbursements.query.filter(Disbursements.check_number == check_number).first():
             form.check_number.errors.append("Check number is already used.")
+
+

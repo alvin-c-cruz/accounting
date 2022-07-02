@@ -27,7 +27,7 @@ class DisbursementsForm(FlaskForm):
 
 
 class JournalDateRange(FlaskForm):
-    date_from = DateField(label="From")
-    date_to = DateField(label="To")
+    date_from = DateField(label="From", validators=[DataRequired()])
+    date_to = DateField(label="To", validators=[DataRequired()])
 
     submit = SubmitField(label="Download Journal")
