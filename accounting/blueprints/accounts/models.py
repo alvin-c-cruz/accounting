@@ -1,3 +1,5 @@
+from sqlalchemy.sql import func
+
 from accounting import db
 from .. data_model import DataModel
 
@@ -17,6 +19,17 @@ class Accounts(db.Model, DataModel):
 
     def __repr__(self):
         return f"{self.account_number}: {self.account_title}"
+
+    def balance(self):
+        from .. disbursements import DisbursementsEntry
+        from .. petty_cash import PettyCashEntry
+
+        run_balance = 0
+        for obj in (DisbursementsEntry, PettyCashEntry):
+            for entry in obj.query.filter(obj.account_id == self.id).all():
+                run_balance += entry.debit - entry.credit
+
+        return run_balance
 
 
 def account_choices():

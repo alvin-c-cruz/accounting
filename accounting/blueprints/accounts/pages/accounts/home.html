@@ -14,6 +14,8 @@
         <th>Account Number</th>
         <th>Account Title</th>
         <th>Account Type</th>
+        <th>Debit</th>
+        <th>Credit</th>
         <th>Actions</th>
     </tr>
     {% if not accounts %}
@@ -26,6 +28,18 @@
         <td>{{ account.account_number }}</td>
         <td>{{ account.account_title }}</td>
         <td>{{ account.account_type }}</td>
+        {% with account_balance = account.balance()  %}
+            {% if account_balance > 0 %}
+        <td>{{ "{:,.2f}".format(account_balance|float) }}</td>
+        <td></td>
+            {% elif account_balance < 0 %}
+        <td></td>
+        <td>{{ "{:,.2f}".format(account_balance * -1|float) }}</td>
+            {% else %}
+        <td></td>
+        <td></td>
+            {% endif %}
+        {% endwith %}
         <td>
             {{ edit_btn("accounts.edit", account.id) }}
             {{ delete_btn("accounts.delete", account.id) }}
