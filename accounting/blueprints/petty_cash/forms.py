@@ -3,24 +3,24 @@ from wtforms import StringField, DateField, TextAreaField, SelectField, SubmitFi
 from wtforms.validators import DataRequired, optional
 
 
-class DisbursementsEntryForm(Form):
+class PettyCashEntryForm(Form):
     entry_id = HiddenField(label="id")
-    disbursement_id = StringField(label="Disbursement ID")
+    petty_cash_id = StringField(label="Petty Cash ID")
     account_id = SelectField(label="Account Title")
     debit = StringField(label="Debit", default="0.00")
     credit = StringField(label="Credit", default="0.00")
     notes = StringField(label="Notes")
 
 
-class DisbursementsForm(FlaskForm):
+class PettyCashForm(FlaskForm):
     record_date = DateField(label="Record Date", validators=[DataRequired()])
-    bank_date = DateField(label="Bank Date", validators=[optional()])
-    disbursement_number = StringField(label="CD Number", validators=[DataRequired()])
-    check_number = StringField(label="Check Number", validators=[DataRequired()])
+    report_date = DateField(label="Report Date", validators=[optional()])
+    petty_cash_number = StringField(label="PCF Number", validators=[DataRequired()])
+    invoice_number = StringField(label="Invoice Number")
     notes = TextAreaField(label="Description")
     vendor_id = SelectField(label="Vendor", validators=[DataRequired()])
 
-    entries = FieldList(FormField(DisbursementsEntryForm), min_entries=10)
+    entries = FieldList(FormField(PettyCashEntryForm), min_entries=10)
 
     submit = SubmitField(label="Save")
 

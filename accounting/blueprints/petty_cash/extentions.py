@@ -26,7 +26,7 @@ ALIGNMENT = {
 NUMBER_FORMAT = {
                 "Date": "yyyy-mmm-dd",
                 "No.": "General",
-                "Check Number": "General",
+                "Invoice Number": "General",
                 "Vendor": "General",
                 "Particulars": "General"
             }
@@ -34,7 +34,7 @@ NUMBER_FORMAT = {
 COLUMN_WIDTH = {
                 "Date": 12,
                 "No.": 10,
-                "Check Number": 12,
+                "Invoice Number": 12,
                 "Vendor": 20,
                 "Particulars": 25
             }
@@ -45,7 +45,7 @@ def create_journal(data, app, date_from, date_to):
     for file in list_files:
         os.remove(os.path.join(app.instance_path, "temp", file))
 
-    filename = os.path.join(app.instance_path, "temp", "disbursements journal.xlsx")
+    filename = os.path.join(app.instance_path, "temp", "petty cash journal.xlsx")
 
     wb = Workbook()
 
@@ -60,9 +60,9 @@ def create_journal(data, app, date_from, date_to):
 class WriteData:
     def __init__(self, wb, data, date_from, date_to):
         ws = wb["Sheet"]
-        ws.title = "CDJ"
+        ws.title = "PCF"
 
-        self.voucher_columns = ["Date", "No.", "Check Number", "Vendor", "Particulars"]
+        self.voucher_columns = ["Date", "No.", "Invoice Number", "Vendor", "Particulars"]
 
         reformed_data = self.reform_data(data)
         row_start = row_num = self.write_headers(ws, date_from, date_to)
@@ -77,8 +77,8 @@ class WriteData:
         for voucher in data:
             _dict = {
                 "Date": voucher.record_date,
-                "No.": voucher.disbursement_number,
-                "Check Number": voucher.check_number,
+                "No.": voucher.petty_cash_number,
+                "Invoice Number": voucher.invoice_number,
                 "Vendor": voucher.vendor.vendor_name,
                 "Particulars": voucher.notes
             }
@@ -98,8 +98,8 @@ class WriteData:
                                         ).order_by(
                                                 Accounts.account_number
                                                 ).all()
-                                        if account.account_title in df_data.columns
-                               ]
+                              if account.account_title in df_data.columns
+                              ]
 
         other_accounts = Accounts.query.filter(~Accounts.account_title.in_(preferred_accounts)
                                                ).order_by(Accounts.account_number).all()
@@ -141,7 +141,7 @@ class WriteData:
 
         row_num += 1
         cell = ws[f"A{row_num}"]
-        cell.value = "Disbursement Journal"
+        cell.value = "Petty Cash Journal"
         cell.font = Font(size=10, bold=True)
 
         row_num += 1

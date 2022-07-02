@@ -15,3 +15,8 @@ class Vendors(db.Model, DataModel):
     def __repr__(self):
         return self.vendor_name
 
+
+def vendor_choices():
+    data = [(row.id, row) for row in Vendors.query.order_by(Vendors.vendor_name).all()]
+    data.insert(0, ("", ""))
+    return data

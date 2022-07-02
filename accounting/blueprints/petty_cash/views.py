@@ -2,17 +2,16 @@ from flask import Blueprint, render_template, redirect, url_for, flash, send_fil
 from flask_login import login_required, current_user
 from datetime import datetime, timedelta
 
-
 from accounting import db, incrementer, to_float, balance_check
 
-from .models import Disbursements, DisbursementsEntry
-from .forms import DisbursementsForm, JournalDateRange
+from .models import PettyCash, PettyCashEntry
+from .forms import PettyCashForm, JournalDateRange
 from .extentions import create_journal
 
 from .. vendors import vendor_choices
 from .. accounts import account_choices
 
-bp = Blueprint("disbursements", __name__, template_folder="pages", url_prefix="/disbursements")
+bp = Blueprint("petty_cash", __name__, template_folder="pages", url_prefix="/petty_cash")
 
 
 @bp.route("/<int:page>", methods=["GET", "POST"])
@@ -36,9 +35,9 @@ def home(page):
             date_from = datetime(date_from.year, date_from.month, date_from.day)
             date_to = datetime(date_to.year, date_to.month, date_to.day)
 
-            data = Disbursements.query.filter(
-                Disbursements.record_date >= date_from, Disbursements.record_date <= date_to
-                ).order_by(Disbursements.disbursement_number).all()
+            data = PettyCash.query.filter(
+                PettyCash.record_date >= date_from, PettyCash.record_date <= date_to
+                ).order_by(PettyCash.petty_cash_number).all()
 
             if data:
                 filename = create_journal(data, current_app, date_from, date_to)
@@ -56,23 +55,23 @@ def home(page):
         journal_form.date_to.data = last_day
 
     context = {
-        "data": Disbursements.query.order_by(Disbursements.disbursement_number.desc()).paginate(page=page, per_page=10),
+        "data": PettyCash.query.order_by(PettyCash.petty_cash_number.desc()).paginate(page=page, per_page=10),
         "columns": [
             {"label": "Record Date", "key": "record_date"},
-            {"label": "Bank Date", "key": "bank_date"},
-            {"label": "CD Number", "key": "disbursement_number"},
-            {"label": "Check Number", "key": "check_number"},
+            {"label": "Report Date", "key": "report_date"},
+            {"label": "PCF Number", "key": "petty_cash_number"},
+            {"label": "Invoice Number", "key": "invoice_number"},
             {"label": "Vendor", "key": "vendor"},
         ],
         "journal_form": journal_form
     }
-    return render_template("disbursements/home.html", **context)
+    return render_template("petty_cash/home.html", **context)
 
 
 @bp.route("/add", methods=["GET", "POST"])
 @login_required
 def add():
-    form = DisbursementsForm()
+    form = PettyCashForm()
     form.vendor_id.choices = vendor_choices()
     for entry in form.entries:
         entry.account_id.choices = account_choices()
@@ -81,11 +80,11 @@ def add():
         validate(form)
 
         if not form.errors:
-            new_data = Disbursements(
+            new_data = PettyCash(
                 record_date=form.record_date.data,
-                bank_date=form.bank_date.data,
-                disbursement_number=form.disbursement_number.data,
-                check_number=form.check_number.data,
+                report_date=form.report_date.data,
+                petty_cash_number=form.petty_cash_number.data,
+                invoice_number=form.invoice_number.data,
                 notes=form.notes.data,
                 vendor_id=form.vendor_id.data,
                 user_id=current_user.id
@@ -94,8 +93,8 @@ def add():
             for i, entry in enumerate(form.entries):
                 if entry.account_id.data == "":
                     continue
-                new_entry = DisbursementsEntry(
-                    disbursement_id=new_data.id,
+                new_entry = PettyCashEntry(
+                    petty_cash_id=new_data.id,
                     account_id=entry.account_id.data,
                     debit=to_float(entry.debit.data),
                     credit=to_float(entry.credit.data),
@@ -108,7 +107,7 @@ def add():
                 db.session.add(new_data)
                 db.session.commit()
                 flash(f"Added {new_data}", category="success")
-                return redirect(url_for("disbursements.home", page=1))
+                return redirect(url_for("petty_cash.home", page=1))
             else:
                 total_debit = "{:,.2f}".format(total_debit)
                 total_credit = "{:,.2f}".format(total_credit)
@@ -116,22 +115,21 @@ def add():
 
     else:
         form.record_date.data = datetime.today()
-        last_entry = Disbursements.query.order_by(-Disbursements.id).first()
+        last_entry = PettyCash.query.order_by(-PettyCash.id).first()
         if last_entry:
-            form.disbursement_number.data = incrementer(last_entry.disbursement_number)
-            form.check_number.data = incrementer(last_entry.check_number)
+            form.petty_cash_number.data = incrementer(last_entry.petty_cash_number)
 
     context = {
         "form": form
     }
-    return render_template("disbursements/add.html", **context)
+    return render_template("petty_cash/add.html", **context)
 
 
 @bp.route("/edit/<id>", methods=["GET", "POST"])
 @login_required
 def edit(id):
-    data_to_edit = Disbursements.query.filter_by(id=id).first()
-    form = DisbursementsForm(obj=data_to_edit)
+    data_to_edit = PettyCash.query.filter_by(id=id).first_or_404()
+    form = PettyCashForm(obj=data_to_edit)
     form.vendor_id.choices = vendor_choices()
     for entry in form.entries:
         entry.account_id.choices = account_choices()
@@ -171,8 +169,8 @@ def edit(id):
                     if not account_id and not notes and debit == 0 and credit == 0:
                         continue
 
-                    new_entry = DisbursementsEntry(
-                        disbursement_id=data_to_edit.id,
+                    new_entry = PettyCashEntry(
+                        petty_cash_id=data_to_edit.id,
                         account_id=account_id,
                         debit=to_float(debit),
                         credit=to_float(credit),
@@ -187,7 +185,7 @@ def edit(id):
             if total_debit == total_credit:
                 db.session.commit()
                 flash(f"Edited {data_to_edit}", category="success")
-                return redirect(url_for("disbursements.home", page=1))
+                return redirect(url_for("petty_cash.home", page=1))
             else:
                 total_debit = "{:,.2f}".format(total_debit)
                 total_credit = "{:,.2f}".format(total_credit)
@@ -198,13 +196,13 @@ def edit(id):
         "id": id
     }
 
-    return render_template("disbursements/edit.html", **context)
+    return render_template("petty_cash/edit.html", **context)
 
 
 @bp.route("/delete/<id>", methods=["GET", "POST"])
 @login_required
 def delete(id):
-    data_to_delete = Disbursements.query.get_or_404(id)
+    data_to_delete = PettyCash.query.get_or_404(id)
 
     for entry in data_to_delete.entries:
         db.session.delete(entry)
@@ -214,13 +212,13 @@ def delete(id):
     db.session.commit()
 
     flash(f"Deleted {data_to_delete}", category="success")
-    return redirect(url_for("disbursements.home", page=1))
+    return redirect(url_for("petty_cash.home", page=1))
 
 
 def validate(form, id=None):
     record_date = form.record_date.data
-    disbursement_number = form.disbursement_number.data
-    check_number = form.check_number.data
+    petty_cash_number = form.petty_cash_number.data
+    invoice_number = form.invoice_number.data
     vendor_id = form.vendor_id.data
 
     if not record_date:
@@ -230,29 +228,31 @@ def validate(form, id=None):
         form.vendor_id.errors.append("Please select a vendor.")
 
     if id:
-        if not disbursement_number:
-            form.disbursement_number.errors.append("Please type CD number.")
-        elif Disbursements.query.filter(
-                Disbursements.disbursement_number == disbursement_number,
-                Disbursements.id != id).first():
-            form.disbursement_number.errors.append("CD number is already used.")
+        if not petty_cash_number:
+            form.petty_cash_number.errors.append("Please type PCF number.")
+        elif PettyCash.query.filter(
+                PettyCash.petty_cash_number == petty_cash_number,
+                PettyCash.id != id).first():
+            form.disbursement_number.errors.append("PCF number is already used.")
 
-        if not check_number:
-            form.check_number.errors.append("Please type check number.")
-        elif Disbursements.query.filter(
-                Disbursements.check_number == check_number,
-                Disbursements.id != id).first():
-            form.check_number.errors.append("Check number is already used.")
+        if not invoice_number:
+            pass
+        elif PettyCash.query.filter(
+                PettyCash.invoice_number == invoice_number,
+                PettyCash.vendor_id == int(vendor_id),
+                PettyCash.id != id).first():
+            form.check_number.errors.append("Invoice number is already used.")
 
     else:
-        if not disbursement_number:
-            form.disbursement_number.errors.append("Please type CD number.")
-        elif Disbursements.query.filter(Disbursements.disbursement_number == disbursement_number).first():
+        if not petty_cash_number:
+            form.petty_cash_number.errors.append("Please type PCF number.")
+        elif PettyCash.query.filter(PettyCash.petty_cash_number == petty_cash_number).first():
             form.disbursement_number.errors.append("CD number is already used.")
 
-        if not check_number:
-            form.check_number.errors.append("Please type check number.")
-        elif Disbursements.query.filter(Disbursements.check_number == check_number).first():
-            form.check_number.errors.append("Check number is already used.")
-
-
+        if not invoice_number:
+            pass
+        elif PettyCash.query.filter(
+                    PettyCash.invoice_number == invoice_number,
+                    PettyCash.vendor_id == int(vendor_id)
+                ).first():
+            form.invoice_number.errors.append("Invoice number is already used.")
