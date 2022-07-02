@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% from "macros.html" import add_btn, string_field, submit_field %}
+
+{% block title %}Company Setup{% endblock %}
+
+{% block content %}
+<h1>Company Setup</h1>
+
+<form method="post" action="{{ url_for('company.home') }}">
+    {{ form.csrf_token }}
+    {{ string_field(form.company_name) }}
+    <hr>
+    <h2>Disbursement Signatories</h2>
+    {{ string_field(form.disbursement_prepared) }}
+    {{ string_field(form.disbursement_check) }}
+    {{ string_field(form.disbursement_audited) }}
+    {{ string_field(form.disbursement_prepared) }}
+    <hr>
+    {{ submit_field(form.submit) }}
+</form>
+
+{% endblock %}

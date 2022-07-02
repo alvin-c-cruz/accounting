@@ -1,6 +1,7 @@
 # Level 0
 from . import landing_page
 from . import user
+from . import company
 
 # Level 1
 from . import account_type

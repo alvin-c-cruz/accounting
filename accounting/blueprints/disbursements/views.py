@@ -1,7 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, send_file, current_app
 from flask_login import login_required, current_user
 from datetime import datetime, timedelta
-from sqlalchemy import and_
 
 
 from accounting import db, incrementer, to_float, balance_check
