@@ -4,6 +4,7 @@ from pandas import DataFrame
 import numpy as np
 
 from .. accounts import Accounts
+from .. company import Company
 
 
 def create_journal(data, app, date_from, date_to):
@@ -81,12 +82,37 @@ class WriteData:
 
     @staticmethod
     def write_headers(ws, date_from, date_to):
-        date_from = date_from.strftime('%B %-d, %Y')
-        date_to = date_to.strftime('%B %-d, %Y')
-        ws["A1"].value = "Disbursement Journal"
-        ws["A2"].value = f"From {date_from} to {date_to}"
+        if date_from.year != date_to.year:
+            date_from = date_from.strftime('%B %-d, %Y')
+            date_to = date_to.strftime('%B %-d, %Y')
+            date_range = f"From {date_from} to {date_to}"
 
-        return 4
+        elif date_from.month != date_to.month:
+            date_from = date_from.strftime('%B %-d')
+            date_to = date_to.strftime('%B %-d, %Y')
+            date_range = f"From {date_from} to {date_to}"
+
+        elif date_from == date_to:
+            date_from = date_from.strftime('%B %-d, %Y')
+            date_range = f"For {date_from}"
+
+        else:
+            date_from = date_from.strftime('%B %-d')
+            date_to = date_to.strftime('%-d, %Y')
+            date_range = f"From {date_from} to {date_to}"
+
+        row_num = 1
+        ws[f"A{row_num}"].value = Company.query.get(1).company_name
+
+        row_num += 1
+        ws[f"A{row_num}"].value = "Disbursement Journal"
+
+        row_num += 1
+        ws[f"A{row_num}"].value = date_range
+
+        row_num += 2
+
+        return row_num
 
     @staticmethod
     def write_details(ws, reformed_data, row_num):
