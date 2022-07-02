@@ -44,11 +44,11 @@
         {% for row in data.items %}
     <tr>
         <td>
-            {{ row.record_date.strftime('%Y %b %-d')  }}
+            {{ row.record_date.strftime('%Y %b %d')  }}
         </td>
         <td>
             {% if row.bank_date %}
-            {{ row.bank_date.strftime('%Y %b %-d')  }}
+            {{ row.bank_date.strftime('%Y %b %d')  }}
             {% endif %}
         </td>
         <td>{{ row.disbursement_number  }}</td>

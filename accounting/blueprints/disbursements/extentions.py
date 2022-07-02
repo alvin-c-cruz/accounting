@@ -1,10 +1,43 @@
 import os
-from openpyxl import Workbook
-from pandas import DataFrame
+from pandas import DataFrame, concat
 import numpy as np
+from openpyxl import Workbook
+from openpyxl.styles import Font, Alignment
+from openpyxl.styles.borders import Border, Side
 
 from .. accounts import Accounts
 from .. company import Company
+
+thin_border = Border(left=Side(style='thin'),
+                     right=Side(style='thin'),
+                     top=Side(style='thin'),
+                     bottom=Side(style='thin'))
+
+double_rule_border = Border(bottom=Side(style='double'))
+
+ALIGNMENT = {
+                "Date": Alignment(horizontal="center", vertical="top"),
+                "No.": Alignment(horizontal="center", vertical="top"),
+                "Check Number": Alignment(horizontal="center", vertical="top"),
+                "Vendor": Alignment(horizontal="left", vertical="top", wrap_text=True),
+                "Particulars": Alignment(horizontal="left", vertical="top", wrap_text=True)
+            }
+
+NUMBER_FORMAT = {
+                "Date": "yyyy-mmm-dd",
+                "No.": "General",
+                "Check Number": "General",
+                "Vendor": "General",
+                "Particulars": "General"
+            }
+
+COLUMN_WIDTH = {
+                "Date": 12,
+                "No.": 10,
+                "Check Number": 12,
+                "Vendor": 20,
+                "Particulars": 25
+            }
 
 
 def create_journal(data, app, date_from, date_to):
@@ -58,7 +91,7 @@ class WriteData:
                     _dict[account_title] = 0
                 _dict[account_title] += entry.debit - entry.credit
 
-            df_data = df_data.append(_dict, ignore_index=True)
+            df_data = concat([df_data, DataFrame(_dict, index={len(df_data)+1})])
 
         preferred_accounts = [account.account_title for account in Accounts.query.filter(
                                         Accounts.account_type_id == 1
@@ -83,32 +116,38 @@ class WriteData:
     @staticmethod
     def write_headers(ws, date_from, date_to):
         if date_from.year != date_to.year:
-            date_from = date_from.strftime('%B %-d, %Y')
-            date_to = date_to.strftime('%B %-d, %Y')
+            date_from = date_from.strftime('%B %d, %Y')
+            date_to = date_to.strftime('%B %d, %Y')
             date_range = f"From {date_from} to {date_to}"
 
         elif date_from.month != date_to.month:
-            date_from = date_from.strftime('%B %-d')
-            date_to = date_to.strftime('%B %-d, %Y')
+            date_from = date_from.strftime('%B %d')
+            date_to = date_to.strftime('%B %d, %Y')
             date_range = f"From {date_from} to {date_to}"
 
         elif date_from == date_to:
-            date_from = date_from.strftime('%B %-d, %Y')
+            date_from = date_from.strftime('%B %d, %Y')
             date_range = f"For {date_from}"
 
         else:
-            date_from = date_from.strftime('%B %-d')
-            date_to = date_to.strftime('%-d, %Y')
+            date_from = date_from.strftime('%B %d')
+            date_to = date_to.strftime('%d, %Y')
             date_range = f"From {date_from} to {date_to}"
 
         row_num = 1
-        ws[f"A{row_num}"].value = Company.query.get(1).company_name
+        cell = ws[f"A{row_num}"]
+        cell.value = Company.query.get(1).company_name
+        cell.font = Font(size=14, bold=True)
 
         row_num += 1
-        ws[f"A{row_num}"].value = "Disbursement Journal"
+        cell = ws[f"A{row_num}"]
+        cell.value = "Disbursement Journal"
+        cell.font = Font(size=10, bold=True)
 
         row_num += 1
-        ws[f"A{row_num}"].value = date_range
+        cell = ws[f"A{row_num}"]
+        cell.value = date_range
+        cell.font = Font(size=10, bold=True)
 
         row_num += 2
 
@@ -119,13 +158,28 @@ class WriteData:
         column_ref = {value: i + 1 for i, value in enumerate(reformed_data.columns)}
         for value, i in column_ref.items():
             cell = ws.cell(row=row_num, column=i)
+
+            # Adjust column width
+            column_letter = cell.column_letter
+            ws.column_dimensions[column_letter].width = 14 if value not in COLUMN_WIDTH else COLUMN_WIDTH[value]
+
+            # Write column header
             cell.value = value
+            cell.font = Font(size=10, bold=True)
+            cell.alignment = Alignment(horizontal="center", wrap_text=True)
+            cell.border = thin_border
         row_num += 1
 
+        # Write row details
         for i, row in reformed_data.iterrows():
             for key, column in column_ref.items():
                 cell = ws.cell(row=row_num, column=column)
                 cell.value = row[key]
+                cell.font = Font(size=10)
+                cell.border = thin_border
+                cell.alignment = Alignment(horizontal="right", vertical="top") \
+                    if key not in ALIGNMENT else ALIGNMENT[key]
+                cell.number_format = "#,##0.00; (#,##0.00)" if key not in NUMBER_FORMAT else NUMBER_FORMAT[key]
             row_num += 1
 
         row_num += 1
@@ -137,7 +191,12 @@ class WriteData:
 
         cell = ws[f"A{row_num}"]
         cell.value = "Total"
+        cell.font = Font(size=10, bold=True)
 
         for column in range(column_start, column_start + len(self.accounts)):
             cell = ws.cell(row=row_num, column=column)
             cell.value = f"=SUM({cell.column_letter}{row_start}:{cell.column_letter}{row_end})"
+            cell.font = Font(size=10)
+            cell.alignment = Alignment(horizontal="right")
+            cell.border = double_rule_border
+            cell.number_format = "#,##0.00; (#,##0.00)"
