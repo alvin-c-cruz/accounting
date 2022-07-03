@@ -15,6 +15,21 @@ class Vendors(db.Model, DataModel):
     def __repr__(self):
         return self.vendor_name
 
+    def balance(self):
+        from ..accounts_payable import AccountsPayable
+        from ..disbursements import Disbursements
+        from ..petty_cash import PettyCash
+
+        run_balance = 0
+        for obj in (AccountsPayable, Disbursements, PettyCash):
+            vouchers = obj.query.filter_by(vendor_id=self.id).all()
+            for voucher in vouchers:
+                for entry in voucher.entries:
+                    if entry.account.account_type.account_type == "Accounts Payable":
+                        run_balance += entry.credit - entry.debit
+
+        return run_balance
+
 
 def vendor_choices():
     data = [(row.id, row) for row in Vendors.query.order_by(Vendors.vendor_name).all()]

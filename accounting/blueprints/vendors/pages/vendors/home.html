@@ -14,6 +14,7 @@
         {% for column in columns %}
         <th>{{ column['label']  }}</th>
         {% endfor %}
+        <th>Balance</th>
         <th>Actions</th>
     </tr>
     {% if not data %}
@@ -26,6 +27,7 @@
         {% for column in columns %}
         <td>{{ row[column['key']]  }}</td>
         {% endfor %}
+        <td>{{ "{:,.2f}".format(row.balance()|float) }}</td>
         <td>
             {{ edit_btn('vendors.edit', row.id) }}
             {{ delete_btn('vendors.delete', row.id) }}
