@@ -5,6 +5,7 @@ from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment
 from openpyxl.styles.borders import Border, Side
 
+from .. account_type import AccountType
 from .. accounts import Accounts
 from .. company import Company
 
@@ -93,8 +94,9 @@ class WriteData:
 
             df_data = concat([df_data, DataFrame(_dict, index={len(df_data)+1})])
 
+        account_type = AccountType.query.filter_by(account_type="Cash and Cash Equivalents").first()
         preferred_accounts = [account.account_title for account in Accounts.query.filter(
-                                        Accounts.account_type_id == 1
+                                        Accounts.account_type_id == account_type.id
                                         ).order_by(
                                                 Accounts.account_number
                                                 ).all()

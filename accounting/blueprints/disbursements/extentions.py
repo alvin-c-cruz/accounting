@@ -96,7 +96,7 @@ class WriteData:
 
         account_type = AccountType.query.filter_by(account_type="Cash and Cash Equivalents").first()
         preferred_accounts = [account.account_title for account in Accounts.query.filter(
-                                        Accounts.account_type_id == 1
+                                        Accounts.account_type_id == account_type.id
                                         ).order_by(
                                                 Accounts.account_number
                                                 ).all()
