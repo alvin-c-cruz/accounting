@@ -46,7 +46,7 @@ def create_journal(data, app, date_from, date_to):
     for file in list_files:
         os.remove(os.path.join(app.instance_path, "temp", file))
 
-    filename = os.path.join(app.instance_path, "temp", "sales journal.xlsx")
+    filename = os.path.join(app.instance_path, "temp", "receipts journal.xlsx")
 
     wb = Workbook()
 
@@ -61,7 +61,7 @@ def create_journal(data, app, date_from, date_to):
 class WriteData:
     def __init__(self, wb, data, date_from, date_to):
         ws = wb["Sheet"]
-        ws.title = "SJ"
+        ws.title = "CRJ"
 
         self.voucher_columns = ["Date", "No.", "Invoice Number", "Customer", "Particulars"]
 
@@ -78,7 +78,7 @@ class WriteData:
         for voucher in data:
             _dict = {
                 "Date": voucher.record_date,
-                "No.": voucher.sales_number,
+                "No.": voucher.receipt_number,
                 "Invoice Number": voucher.invoice_number,
                 "Customer": voucher.customer.customer_name,
                 "Particulars": voucher.notes

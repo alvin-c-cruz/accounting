@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% from "macros.html" import date_field, add_btn, edit_btn, delete_btn, submit_field, render_pagination %}
 
-{% block title %}Sales{% endblock %}
+{% block title %}Receipts{% endblock %}
 
 {% block content %}
-<h1>Sales</h1>
+<h1>Receipts</h1>
 <div class="row">
     <div class="col">
-        <form class="form" method="post" action="{{ url_for('sales.home', page=1) }}">
+        <form class="form" method="post" action="{{ url_for('receipts.home', page=1) }}">
             {{ journal_form.csrf_token }}
             {{ journal_form.date_from.label }}
             {{ journal_form.date_from }}
@@ -20,17 +20,15 @@
 
     </div>
     <div class="col text-end">
-        {{ add_btn("sales.add", "Add Sales") }}
+        {{ add_btn("receipts.add", "Add Receipt") }}
     </div>
 </div>
-
-
 
 <table class="table table-striped table-dark">
     <tr>
         <th>Record Date</th>
         <th>Bank Date</th>
-        <th>AP Number</th>
+        <th>Receipt Number</th>
         <th>Invoice Number</th>
         <th>Customer</th>
         <th>Amount</th>
@@ -51,19 +49,19 @@
             {{ row.bank_date.strftime('%Y %b %d')  }}
             {% endif %}
         </td>
-        <td>{{ row.sales_number  }}</td>
+        <td>{{ row.receipt_number  }}</td>
         <td>{{ row.invoice_number }}</td>
         <td>{{ row.customer.customer_name }}</td>
         <td>
             {{ row.cash_total() }}
         </td>
         <td>
-            {{ edit_btn("sales.edit", row.id) }}
-            {{ delete_btn("sales.delete", row.id) }}
+            {{ edit_btn("receipts.edit", row.id) }}
+            {{ delete_btn("receipts.delete", row.id) }}
         </td>
     </tr>
         {% endfor %}
     {% endif %}
 </table>
-{{ render_pagination(data, "sales.home") }}
+{{ render_pagination(data, "receipts.home") }}
 {% endblock %}

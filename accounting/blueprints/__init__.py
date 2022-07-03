@@ -13,6 +13,7 @@ from . import accounts
 
 # Level 3
 from . import sales
+from . import receipts
 from . import accounts_payable
 from . import disbursements
 from . import petty_cash
