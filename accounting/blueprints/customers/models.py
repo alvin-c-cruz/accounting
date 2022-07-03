@@ -16,17 +16,19 @@ class Customers(db.Model, DataModel):
         return self.customer_name
 
     def balance(self):
-        # from ..accounts_payable import AccountsPayable
-        # from ..disbursements import Disbursements
-        # from ..petty_cash import PettyCash
+        from .. sales import Sales
+        from .. receipts import Receipts
 
         run_balance = 0
-        # for obj in (AccountsPayable, Disbursements, PettyCash):
-        #     vouchers = obj.query.filter_by(vendor_id=self.id).all()
-        #     for voucher in vouchers:
-        #         for entry in voucher.entries:
-        #             if entry.account.account_type.account_type == "Accounts Payable":
-        #                 run_balance += entry.credit - entry.debit
+        for obj in (Sales, Receipts):
+            vouchers = obj.query.filter_by(customer_id=self.id).all()
+
+            for voucher in vouchers:
+                for entry in voucher.entries:
+                    if entry.account.account_type.account_type == "Trade Receivable":
+                        run_balance += entry.debit - entry.credit
+                        print(entry.account.account_type.account_type)
+                        print(entry.debit - entry.credit)
 
         return run_balance
 
