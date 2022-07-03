@@ -24,9 +24,10 @@ class Accounts(db.Model, DataModel):
         from .. accounts_payable import AccountsPayableEntry
         from .. disbursements import DisbursementsEntry
         from .. petty_cash import PettyCashEntry
+        from .. general import GeneralEntry
 
         run_balance = 0
-        for obj in (SalesEntry, ReceiptsEntry, AccountsPayableEntry, DisbursementsEntry, PettyCashEntry):
+        for obj in (SalesEntry, ReceiptsEntry, AccountsPayableEntry, DisbursementsEntry, PettyCashEntry, GeneralEntry):
             for entry in obj.query.filter(obj.account_id == self.id).all():
                 run_balance += entry.debit - entry.credit
 

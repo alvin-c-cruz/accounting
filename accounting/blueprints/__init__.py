@@ -17,6 +17,7 @@ from . import receipts
 from . import accounts_payable
 from . import disbursements
 from . import petty_cash
+from . import general
 
 # Transition
 from . import transition
