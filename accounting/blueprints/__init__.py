@@ -12,6 +12,7 @@ from . import customers
 from . import accounts
 
 # Level 3
+from . import sales
 from . import accounts_payable
 from . import disbursements
 from . import petty_cash
