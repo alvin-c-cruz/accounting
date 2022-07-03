@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% from "macros.html" import string_field, select_field, submit_field, add_btn %}
+
+{% block title %}Edit Customer{% endblock %}
+
+{% block content %}
+<h1>Edit Customer</h1>
+<form action="{{ url_for('customers.edit', id=id) }}" method="post" class="form">
+    {{ form.csrf_token }}
+    {{ string_field(form.customer_name) }}
+    {{ string_field(form.customer_tin) }}
+    {{ submit_field(form.submit) }}
+</form>
+{% endblock %}

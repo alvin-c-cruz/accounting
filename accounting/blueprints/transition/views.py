@@ -8,7 +8,8 @@ from accounting import db
 
 from .. account_type import AccountType
 from .. vendors import Vendors
-#
+from .. customers import Customers
+
 from .. accounts import Accounts
 
 bp = Blueprint('transition', __name__, url_prefix="/transition")
@@ -20,6 +21,7 @@ def home():
     default_user()
     reload(AccountType)
     reload(Vendors)
+    reload(Customers)
 
     reload(Accounts)
     flash("Data reloaded.", category="success")
