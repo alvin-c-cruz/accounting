@@ -7,9 +7,9 @@ from .. data_model import DataModel
 class User(UserMixin, db.Model, DataModel):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(64), unique=True, nullable=False)
-    password = db.Column(db.String(64), nullable=False)
+    password = db.Column(db.String(255), nullable=False)
     name = db.Column(db.String(64))
-    admin = db.Column(db.Boolean(), default=False)
+    admin = db.Column(db.Boolean, default=False)
     registered_on = db.Column(db.DateTime, default=datetime.utcnow)
     confirmed_on = db.Column(db.DateTime)
 

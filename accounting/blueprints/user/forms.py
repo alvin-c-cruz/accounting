@@ -4,7 +4,7 @@ from wtforms.validators import DataRequired, Email, Length
 
 
 class UserForm(FlaskForm):
-    name = StringField(label="Name", validators=[DataRequired()],
+    name = StringField(label="Username", validators=[DataRequired()],
                        render_kw={"autocomplete": "off", "placeholder": "Type your name here"})
     email = EmailField(label="Email", validators=[DataRequired(), Email()],
                        render_kw={"autocomplete": "off", "placeholder": "Type your email here"})
@@ -17,6 +17,6 @@ class UserForm(FlaskForm):
 
 
 class LoginForm(FlaskForm):
-    email = EmailField(label="Email", validators=[DataRequired(), Email()], render_kw={"autocomplete": "off"})
-    password = PasswordField(label="Password", validators=[DataRequired(), Length(min=8)])
+    name = StringField(label="Username", validators=[DataRequired()], render_kw={"autocomplete": "off"})
+    password = PasswordField(label="Password", validators=[DataRequired()])
     submit = SubmitField(label="Log In", render_kw={"class_": "btn btn-success"})

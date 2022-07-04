@@ -8,7 +8,7 @@
 <form action="{{ url_for('user.login') }}" method="post" class="form" role="form">
     {{ form.csrf_token }}
 
-    {{ string_field(form.email) }}
+    {{ string_field(form.name) }}
     {{ string_field(form.password) }}
     {{ submit_field(form.submit) }}
 </form>

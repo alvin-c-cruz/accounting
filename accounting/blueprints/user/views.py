@@ -35,10 +35,11 @@ def register():
             user = User(
                 email=email,
                 name=name,
-                password=generate_password_hash(password=password, method="pbkdf2:sha256", salt_length=16),
+                password=generate_password_hash(password),
                 registered_on=datetime.now()
             )
-            user.save_and_commit()
+            db.session.add(user)
+            db.session.commit()
 
             # send_confirmation_email(email)
 
@@ -55,14 +56,17 @@ def register():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        user = db.session.query(User).filter_by(email=form.email.data).first()
+        name = form.name.data
+        password = form.password.data
+
+        user = User.query.filter_by(name=name).first()
         if user:
-            if check_password_hash(user.password, form.password.data):
+            if check_password_hash(user.password, password):
                 login_user(user)
                 flash("Login in successful.", "success")
                 return redirect(url_for('landing_page.home'))
 
-        flash("Email or password is incorrect.", "error")
+        flash("Name or password is incorrect.", "error")
     return render_template("user/login.html", form=form)
 
 
