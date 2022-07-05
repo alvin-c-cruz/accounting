@@ -18,10 +18,14 @@
     </div>
 {% endmacro %}
 
-{% macro date_field(field) %}
+{% macro date_field(field, autofocus=False) %}
     <div class="form-group mt-2 mb-2">
         {{ field.label(class="control-label") }}
+        {% if autofocus %}
+        {{ field(class="form-control", autofocus="autofocus") }}
+        {% else %}
         {{ field(class="form-control") }}
+        {% endif %}
     </div>
 {% endmacro %}
 
