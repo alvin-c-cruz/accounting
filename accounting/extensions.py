@@ -35,12 +35,14 @@ def incrementer(data):
 
 
 def to_float(data):
-    if type(data) not in (int, float):
+    if type(data) in (int, float):
+        return data
+    elif type(data) is str:
         data = data.replace(",", "")
         data = data.replace("-", "")
-        if not data.isdigit():
-            return 0
-    return float(data)
+        return float(data)
+    else:
+        return 0
 
 
 def balance_check(entries):
