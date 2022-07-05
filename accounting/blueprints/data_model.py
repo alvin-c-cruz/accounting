@@ -5,12 +5,12 @@ from flask import current_app
 
 
 class DataModel:
-    def data(self, form):
-        columns = self.__table__.columns.keys()
-        for column in columns:
-            if column in ("id", "user_id", "date_modified", "entries"):
-                continue
-            setattr(self, column, getattr(form, column).data)
+    # def data(self, form):
+    #     columns = self.__table__.columns.keys()
+    #     for column in columns:
+    #         if column in ("id", "user_id", "date_modified", "entries"):
+    #             continue
+    #         setattr(self, column, getattr(form, column).data)
 
     def as_json(self, id=None):
         if id:

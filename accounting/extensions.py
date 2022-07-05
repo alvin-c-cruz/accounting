@@ -39,7 +39,7 @@ def to_float(data):
         return data
     elif type(data) is str:
         data = data.replace(",", "")
-        data = data.replace("-", "")
+        # data = data.replace("-", "")
         return float(data)
     else:
         return 0
