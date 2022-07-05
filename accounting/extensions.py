@@ -40,7 +40,7 @@ def to_float(data):
         data = data.replace("-", "")
         if not data.isdigit():
             return 0
-    return data
+    return float(data)
 
 
 def balance_check(entries):
