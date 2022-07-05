@@ -40,7 +40,7 @@ def to_float(data):
     elif type(data) is str:
         data = data.replace(",", "")
         data = data.replace("-", "")
-        return round(float(data),2)
+        return float(data)
     else:
         return 0
 
