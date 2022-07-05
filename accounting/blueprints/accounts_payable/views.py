@@ -108,7 +108,7 @@ def add():
                 db.session.add(new_data)
                 db.session.commit()
                 flash(f"Added {new_data}", category="success")
-                return redirect(url_for("accounts_payable.home", page=1))
+                return redirect(url_for("accounts_payable.add"))
             else:
                 total_debit = "{:,.2f}".format(total_debit)
                 total_credit = "{:,.2f}".format(total_credit)
