@@ -107,11 +107,9 @@ def add():
                     "credit": to_float(entry.credit.data),
                     "notes": entry.notes.data
                 }
-<<<<<<< HEAD
-=======
+
                 new_data_json["entries"].append(new_entry_json)
 
->>>>>>> e1958dc7f52f9e888bfab5dc83aac5b8210226ea
                 new_entry = AccountsPayableEntry(
                     **new_entry_json
                 )
