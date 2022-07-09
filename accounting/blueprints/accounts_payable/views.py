@@ -1,7 +1,8 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, send_file, current_app
+from flask import Blueprint, render_template, redirect, url_for, flash, send_file, current_app, jsonify
 from flask_login import login_required, current_user
 from datetime import datetime, timedelta
-
+import json
+import os
 
 from accounting import db, incrementer, to_float, balance_check
 
@@ -81,25 +82,35 @@ def add():
         validate(form)
 
         if not form.errors:
+            new_data_json = {
+                "record_date": form.record_date.data,
+                "due_date": form.due_date.data,
+                "accounts_payable_number": form.accounts_payable_number.data,
+                "invoice_number": form.invoice_number.data,
+                "notes": form.notes.data,
+                "vendor_id": form.vendor_id.data,
+                "user_id": current_user.id,
+            }
             new_data = AccountsPayable(
-                record_date=form.record_date.data,
-                due_date=form.due_date.data,
-                accounts_payable_number=form.accounts_payable_number.data,
-                invoice_number=form.invoice_number.data,
-                notes=form.notes.data,
-                vendor_id=form.vendor_id.data,
-                user_id=current_user.id
+                **new_data_json
             )
 
+            new_data_json["entries"] = []
             for i, entry in enumerate(form.entries):
                 if entry.account_id.data == "":
                     continue
+
+                new_entry_json = {
+                    "accounts_payable_id": new_data.id,
+                    "account_id": entry.account_id.data,
+                    "debit": to_float(entry.debit.data),
+                    "credit": to_float(entry.credit.data),
+                    "notes": entry.notes.data
+                }
+                new_data_json["entries"].append(new_entry_json)
+
                 new_entry = AccountsPayableEntry(
-                    accounts_payable_id=new_data.id,
-                    account_id=entry.account_id.data,
-                    debit=to_float(entry.debit.data),
-                    credit=to_float(entry.credit.data),
-                    notes=entry.notes.data
+                    **new_entry_json
                 )
                 new_data.entries.append(new_entry)
 
@@ -108,6 +119,11 @@ def add():
                 db.session.add(new_data)
                 db.session.commit()
                 flash(f"Added {new_data}", category="success")
+
+                filename = f"AP{new_data_json['accounts_payable_number']}.json"
+                with open(os.path.join(current_app.instance_path, "temp", filename), "w+") as f:
+                    f.write(str(new_data_json))
+
                 return redirect(url_for("accounts_payable.add"))
             else:
                 total_debit = "{:,.2f}".format(total_debit)
