@@ -104,9 +104,10 @@ def add():
                     "account_id": entry.account_id.data,
                     "debit": to_float(entry.debit.data),
                     "credit": to_float(entry.credit.data),
-                    notes = entry.notes.data
+                    "notes": entry.notes.data
                 }
                 new_entry = AccountsPayableEntry(
+                    **new_entry_json
                 )
                 new_data.entries.append(new_entry)
 

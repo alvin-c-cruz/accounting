@@ -69,7 +69,11 @@
 
 {% macro entry_number_field(field) %}
     <div class="form-group">
+        {% if field.data %}
         {{ field(class="form-control", style="text-align:right;", autocomplete="off", value=field.data) }}
+        {% else %}
+        {{ field(class="form-control", style="text-align:right;", autocomplete="off") }}
+        {% endif %}
     </div>
 {% endmacro %}
 

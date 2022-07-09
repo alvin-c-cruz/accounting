@@ -1,5 +1,15 @@
 from flask_wtf import FlaskForm, Form
-from wtforms import StringField, DateField, TextAreaField, SelectField, SubmitField, FormField, FieldList, HiddenField
+from wtforms import (
+    StringField,
+    DateField,
+    TextAreaField,
+    SelectField,
+    SubmitField,
+    FormField,
+    FieldList,
+    HiddenField,
+    FloatField
+)
 from wtforms.validators import DataRequired, optional
 
 
@@ -7,8 +17,8 @@ class AccountsPayableEntryForm(Form):
     entry_id = HiddenField(label="id")
     accounts_payable_id = StringField(label="Payable ID")
     account_id = SelectField(label="Account Title")
-    debit = StringField(label="Debit", default="0.00")
-    credit = StringField(label="Credit", default="0.00")
+    debit = FloatField(label="Debit", default=0)
+    credit = FloatField(label="Credit", default=0)
     notes = StringField(label="Notes")
 
 
