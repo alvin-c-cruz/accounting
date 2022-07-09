@@ -81,25 +81,32 @@ def add():
         validate(form)
 
         if not form.errors:
+            new_data_json = {
+                "record_date": form.record_date.data,
+                "due_date": form.due_date.data,
+                "accounts_payable_number": form.accounts_payable_number.data,
+                "invoice_number": form.invoice_number.data,
+                "notes": form.notes.data,
+                "vendor_id": form.vendor_id.data,
+                "user_id": current_user.id,
+            }
             new_data = AccountsPayable(
-                record_date=form.record_date.data,
-                due_date=form.due_date.data,
-                accounts_payable_number=form.accounts_payable_number.data,
-                invoice_number=form.invoice_number.data,
-                notes=form.notes.data,
-                vendor_id=form.vendor_id.data,
-                user_id=current_user.id
+                **new_data_json
             )
 
+            new_data_json["entries"] = []
             for i, entry in enumerate(form.entries):
                 if entry.account_id.data == "":
                     continue
+
+                new_entry_json = {
+                    "accounts_payable_id": new_data.id,
+                    "account_id": entry.account_id.data,
+                    "debit": to_float(entry.debit.data),
+                    "credit": to_float(entry.credit.data),
+                    notes = entry.notes.data
+                }
                 new_entry = AccountsPayableEntry(
-                    accounts_payable_id=new_data.id,
-                    account_id=entry.account_id.data,
-                    debit=to_float(entry.debit.data),
-                    credit=to_float(entry.credit.data),
-                    notes=entry.notes.data
                 )
                 new_data.entries.append(new_entry)
 
