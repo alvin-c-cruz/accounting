@@ -239,7 +239,7 @@ def validate(form, id=None):
         elif PettyCash.query.filter(
                 PettyCash.petty_cash_number == petty_cash_number,
                 PettyCash.id != id).first():
-            form.disbursement_number.errors.append("PCF number is already used.")
+            form.petty_cash_number.errors.append("PCF number is already used.")
 
         if not invoice_number:
             pass
@@ -247,13 +247,13 @@ def validate(form, id=None):
                 PettyCash.invoice_number == invoice_number,
                 PettyCash.vendor_id == int(vendor_id),
                 PettyCash.id != id).first():
-            form.check_number.errors.append("Invoice number is already used.")
+            form.invoice_number.errors.append("Invoice number is already used.")
 
     else:
         if not petty_cash_number:
             form.petty_cash_number.errors.append("Please type PCF number.")
         elif PettyCash.query.filter(PettyCash.petty_cash_number == petty_cash_number).first():
-            form.disbursement_number.errors.append("CD number is already used.")
+            form.petty_cash_number.errors.append("PCF number is already used.")
 
         if not invoice_number:
             pass

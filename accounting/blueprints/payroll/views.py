@@ -4,14 +4,14 @@ from datetime import datetime, timedelta
 
 from accounting import db, incrementer, to_float, balance_check
 
-from .models import PettyCash, PettyCashEntry
-from .forms import PettyCashForm, JournalDateRange
+from .models import Payroll, PayrollEntry
+from .forms import PayrollForm, JournalDateRange
 from .extentions import create_journal
 
-from .. vendors import vendor_choices
+from .. employees import employee_choices
 from .. accounts import account_choices
 
-bp = Blueprint("petty_cash", __name__, template_folder="pages", url_prefix="/petty_cash")
+bp = Blueprint("payroll", __name__, template_folder="pages", url_prefix="/payroll")
 
 
 @bp.route("/<int:page>", methods=["GET", "POST"])
@@ -35,9 +35,9 @@ def home(page):
             date_from = datetime(date_from.year, date_from.month, date_from.day)
             date_to = datetime(date_to.year, date_to.month, date_to.day)
 
-            data = PettyCash.query.filter(
-                PettyCash.record_date >= date_from, PettyCash.record_date <= date_to
-                ).order_by(PettyCash.petty_cash_number).all()
+            data = Payroll.query.filter(
+                Payroll.record_date >= date_from, Payroll.record_date <= date_to
+                ).order_by(Payroll.payroll_number).all()
 
             if data:
                 filename = create_journal(data, current_app, date_from, date_to)
@@ -55,24 +55,22 @@ def home(page):
         journal_form.date_to.data = last_day
 
     context = {
-        "data": PettyCash.query.order_by(PettyCash.petty_cash_number.desc()).paginate(page=page, per_page=10),
+        "data": Payroll.query.order_by(Payroll.payroll_number.desc()).paginate(page=page, per_page=10),
         "columns": [
             {"label": "Record Date", "key": "record_date"},
-            {"label": "Report Date", "key": "report_date"},
-            {"label": "PCF Number", "key": "petty_cash_number"},
-            {"label": "Invoice Number", "key": "invoice_number"},
-            {"label": "Vendor", "key": "vendor"},
+            {"label": "Payroll Number", "key": "payroll_number"},
+            {"label": "Employee", "key": "employee"},
         ],
         "journal_form": journal_form
     }
-    return render_template("petty_cash/home.html", **context)
+    return render_template("payroll/home.html", **context)
 
 
 @bp.route("/add", methods=["GET", "POST"])
 @login_required
 def add():
-    form = PettyCashForm()
-    form.vendor_id.choices = vendor_choices()
+    form = PayrollForm()
+    form.employee_id.choices = employee_choices()
     for entry in form.entries:
         entry.account_id.choices = account_choices()
 
@@ -80,21 +78,19 @@ def add():
         validate(form)
 
         if not form.errors:
-            new_data = PettyCash(
+            new_data = Payroll(
                 record_date=form.record_date.data,
-                report_date=form.report_date.data,
-                petty_cash_number=form.petty_cash_number.data,
-                invoice_number=form.invoice_number.data,
+                payroll_number=form.payroll_number.data,
                 notes=form.notes.data,
-                vendor_id=form.vendor_id.data,
+                employee_id=form.employee_id.data,
                 user_id=current_user.id
             )
 
             for i, entry in enumerate(form.entries):
                 if entry.account_id.data == "":
                     continue
-                new_entry = PettyCashEntry(
-                    petty_cash_id=new_data.id,
+                new_entry = PayrollEntry(
+                    payroll_id=new_data.id,
                     account_id=entry.account_id.data,
                     debit=to_float(entry.debit.data),
                     credit=to_float(entry.credit.data),
@@ -107,7 +103,7 @@ def add():
                 db.session.add(new_data)
                 db.session.commit()
                 flash(f"Added {new_data}", category="success")
-                return redirect(url_for("petty_cash.add"))
+                return redirect(url_for("payroll.add"))
             else:
                 total_debit = "{:,.2f}".format(total_debit)
                 total_credit = "{:,.2f}".format(total_credit)
@@ -115,22 +111,22 @@ def add():
 
     else:
         form.record_date.data = datetime.today()
-        last_entry = PettyCash.query.order_by(-PettyCash.id).first()
+        last_entry = Payroll.query.order_by(-Payroll.id).first()
         if last_entry:
-            form.petty_cash_number.data = incrementer(last_entry.petty_cash_number)
+            form.payroll_number.data = incrementer(last_entry.payroll_number)
 
     context = {
         "form": form
     }
-    return render_template("petty_cash/add.html", **context)
+    return render_template("payroll/add.html", **context)
 
 
 @bp.route("/edit/<id>", methods=["GET", "POST"])
 @login_required
 def edit(id):
-    data_to_edit = PettyCash.query.filter_by(id=id).first_or_404()
-    form = PettyCashForm(obj=data_to_edit)
-    form.vendor_id.choices = vendor_choices()
+    data_to_edit = Payroll.query.filter_by(id=id).first_or_404()
+    form = PayrollForm(obj=data_to_edit)
+    form.employee_id.choices = employee_choices()
     for entry in form.entries:
         entry.account_id.choices = account_choices()
     if form.validate_on_submit():
@@ -138,11 +134,9 @@ def edit(id):
 
         if not form.errors:
             data_to_edit.record_date = form.record_date.data
-            data_to_edit.report_date = form.report_date.data
-            data_to_edit.petty_cash_number = form.petty_cash_number.data
-            data_to_edit.invoice_number = form.invoice_number.data
-            data_to_edit.notes=form.notes.data
-            data_to_edit.vendor_id=form.vendor_id.data
+            data_to_edit.payroll_number = form.payroll_number.data
+            data_to_edit.notes = form.notes.data
+            data_to_edit.employee_id = form.employee_id.data
 
             data_to_edit.user_id = current_user.id
             data_to_edit.date_modified = datetime.utcnow()
@@ -175,8 +169,8 @@ def edit(id):
                     if not account_id and not notes and debit == 0 and credit == 0:
                         continue
 
-                    new_entry = PettyCashEntry(
-                        petty_cash_id=data_to_edit.id,
+                    new_entry = PayrollEntry(
+                        payroll_id=data_to_edit.id,
                         account_id=account_id,
                         debit=to_float(debit),
                         credit=to_float(credit),
@@ -191,7 +185,7 @@ def edit(id):
             if total_debit == total_credit:
                 db.session.commit()
                 flash(f"Edited {data_to_edit}", category="success")
-                return redirect(url_for("petty_cash.home", page=1))
+                return redirect(url_for("payroll.home", page=1))
             else:
                 total_debit = "{:,.2f}".format(total_debit)
                 total_credit = "{:,.2f}".format(total_credit)
@@ -202,13 +196,13 @@ def edit(id):
         "id": id
     }
 
-    return render_template("petty_cash/edit.html", **context)
+    return render_template("payroll/edit.html", **context)
 
 
 @bp.route("/delete/<id>", methods=["GET", "POST"])
 @login_required
 def delete(id):
-    data_to_delete = PettyCash.query.get_or_404(id)
+    data_to_delete = Payroll.query.get_or_404(id)
 
     for entry in data_to_delete.entries:
         db.session.delete(entry)
@@ -218,47 +212,30 @@ def delete(id):
     db.session.commit()
 
     flash(f"Deleted {data_to_delete}", category="success")
-    return redirect(url_for("petty_cash.home", page=1))
+    return redirect(url_for("payroll.home", page=1))
 
 
 def validate(form, id=None):
     record_date = form.record_date.data
-    petty_cash_number = form.petty_cash_number.data
-    invoice_number = form.invoice_number.data
-    vendor_id = form.vendor_id.data
+    payroll_number = form.payroll_number.data
+    employee_id = form.employee_id.data
 
     if not record_date:
         form.record_date.errors.append("Please type record date.")
 
-    if not vendor_id:
-        form.vendor_id.errors.append("Please select a vendor.")
+    if not employee_id:
+        form.employee_id.errors.append("Please select an employee.")
 
     if id:
-        if not petty_cash_number:
-            form.petty_cash_number.errors.append("Please type PCF number.")
-        elif PettyCash.query.filter(
-                PettyCash.petty_cash_number == petty_cash_number,
-                PettyCash.id != id).first():
-            form.disbursement_number.errors.append("PCF number is already used.")
-
-        if not invoice_number:
-            pass
-        elif PettyCash.query.filter(
-                PettyCash.invoice_number == invoice_number,
-                PettyCash.vendor_id == int(vendor_id),
-                PettyCash.id != id).first():
-            form.check_number.errors.append("Invoice number is already used.")
+        if not payroll_number:
+            form.payroll_number.errors.append("Please type Payroll number.")
+        elif Payroll.query.filter(
+                Payroll.payroll_number == payroll_number,
+                Payroll.id != id).first():
+            form.payroll_number.errors.append("Payroll number is already used.")
 
     else:
-        if not petty_cash_number:
+        if not payroll_number:
             form.petty_cash_number.errors.append("Please type PCF number.")
-        elif PettyCash.query.filter(PettyCash.petty_cash_number == petty_cash_number).first():
-            form.disbursement_number.errors.append("CD number is already used.")
-
-        if not invoice_number:
-            pass
-        elif PettyCash.query.filter(
-                    PettyCash.invoice_number == invoice_number,
-                    PettyCash.vendor_id == int(vendor_id)
-                ).first():
-            form.invoice_number.errors.append("Invoice number is already used.")
+        elif Payroll.query.filter(Payroll.payroll_number == payroll_number).first():
+            form.payroll_number.errors.append("Payroll number is already used.")

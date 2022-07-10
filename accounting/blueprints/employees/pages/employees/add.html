@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% from "macros.html" import string_field, select_field, submit_field, add_btn %}
+
+{% block title %}Add Employee{% endblock %}
+
+{% block content %}
+<h1>Add Employee</h1>
+<form action="{{ url_for('employees.add') }}" method="post" class="form">
+    {{ form.csrf_token }}
+    {{ string_field(form.employee_name, autofocus=True) }}
+    {{ string_field(form.employee_tin) }}
+    {{ submit_field(form.submit) }}
+</form>
+{% endblock %}

@@ -1,2 +1,2 @@
 from .views import bp
-from .models import PettyCash, PettyCashEntry
+from .models import Payroll, PayrollEntry

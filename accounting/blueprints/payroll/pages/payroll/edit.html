@@ -1,29 +1,21 @@
 {% extends "base.html" %}
 {% from "macros.html" import string_field, select_field, date_field, textarea_field, entry_string_field, entry_number_field, entry_select_field, submit_field, add_btn %}
 
-{% block title %}Edit Petty Cash{% endblock %}
+{% block title %}Edit Payroll{% endblock %}
 
 {% block content %}
-<h1>Edit Petty Cash</h1>
-<form action="{{ url_for('petty_cash.edit', id=id) }}" method="post" class="form">
+<h1>Edit Payroll</h1>
+<form action="{{ url_for('payroll.edit', id=id) }}" method="post" class="form">
     {{ form.csrf_token }}
     <div class="row">
         <div class="col-6">
             {{ date_field(form.record_date, autofocus=True) }}
         </div>
         <div class="col-6">
-            {{ date_field(form.report_date) }}
+            {{ date_field(form.payroll_number) }}
         </div>
     </div>
-    {{ select_field(form.vendor_id) }}
-    <div class="row">
-        <div class="col-6">
-            {{ string_field(form.petty_cash_number) }}
-        </div>
-        <div class="col-6">
-            {{ string_field(form.invoice_number) }}
-        </div>
-    </div>
+    {{ select_field(form.employee_id) }}
     {{ textarea_field(form.notes) }}
 
     <table class="table table-striped">

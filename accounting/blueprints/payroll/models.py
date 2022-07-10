@@ -4,19 +4,17 @@ from .. data_model import DataModel
 
 
 @dataclass
-class PettyCash(db.Model, DataModel):
+class Payroll(db.Model, DataModel):
     id = db.Column(db.Integer, primary_key=True)
     record_date = db.Column(db.DateTime, nullable=False)
-    report_date = db.Column(db.DateTime)
-    petty_cash_number = db.Column(db.String(32), nullable=False, unique=True)
-    invoice_number = db.Column(db.String(32), nullable=True)
+    payroll_number = db.Column(db.String(32), nullable=False, unique=True)
     notes = db.Column(db.String(255), nullable=True)
 
-    vendor_id = db.Column(db.Integer, db.ForeignKey("vendors.id"), nullable=False)
-    vendor = db.relationship("Vendors", backref="pettycash")
+    employee_id = db.Column(db.Integer, db.ForeignKey("employees.id"), nullable=False)
+    employee = db.relationship("Employees", backref="payrolls")
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    user = db.relationship('User', backref="pettycash")
+    user = db.relationship('User', backref="payrolls")
 
     date_modified = db.Column(db.DateTime, nullable=True)
 
@@ -24,23 +22,23 @@ class PettyCash(db.Model, DataModel):
         if self.id:
             total = 0
             for entry in self.entries:
-                if entry.account.account_type.account_type == "Cash and Cash Equivalents":
+                if entry.account.account_title == "Salaries Payable":
                     total += entry.credit
             return "{:,.2f}".format(total)
         else:
             return "0.00"
 
     def __repr__(self):
-        return f"{self.petty_cash_number}: {self.vendor.vendor_name}"
+        return f"{self.payroll_number}: {self.employee.employee_name}"
 
 
-class PettyCashEntry(db.Model, DataModel):
+class PayrollEntry(db.Model, DataModel):
     entry_id = db.Column(db.Integer, primary_key=True)
-    petty_cash_id = db.Column(db.Integer, db.ForeignKey("petty_cash.id"), nullable=False)
-    petty_cash = db.relationship("PettyCash", backref="entries")
+    payroll_id = db.Column(db.Integer, db.ForeignKey("payroll.id"), nullable=False)
+    payroll = db.relationship("Payroll", backref="entries")
 
     account_id = db.Column(db.Integer, db.ForeignKey("accounts.id"), nullable=False)
-    account = db.relationship("Accounts", backref="pettycashentry")
+    account = db.relationship("Accounts", backref="payrollentry")
 
     debit = db.Column(db.Float, default="0.0")
     credit = db.Column(db.Float, default="0.0")
@@ -48,4 +46,4 @@ class PettyCashEntry(db.Model, DataModel):
     notes = db.Column(db.String(255))
 
     def __repr__(self):
-        return f"{self.petty_cash_id} - {self.account_id}: {self.debit - self.credit}"
+        return f"{self.payroll_id} - {self.account_id}: {self.debit - self.credit}"

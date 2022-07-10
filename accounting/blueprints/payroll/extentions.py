@@ -19,24 +19,21 @@ double_rule_border = Border(bottom=Side(style='double'))
 ALIGNMENT = {
                 "Date": Alignment(horizontal="center", vertical="top"),
                 "No.": Alignment(horizontal="center", vertical="top"),
-                "Check Number": Alignment(horizontal="center", vertical="top"),
-                "Vendor": Alignment(horizontal="left", vertical="top", wrap_text=True),
+                "Employee": Alignment(horizontal="left", vertical="top", wrap_text=True),
                 "Particulars": Alignment(horizontal="left", vertical="top", wrap_text=True)
             }
 
 NUMBER_FORMAT = {
                 "Date": "yyyy-mmm-dd",
                 "No.": "General",
-                "Invoice Number": "General",
-                "Vendor": "General",
+                "Employee": "General",
                 "Particulars": "General"
             }
 
 COLUMN_WIDTH = {
                 "Date": 12,
                 "No.": 10,
-                "Invoice Number": 12,
-                "Vendor": 20,
+                "Employee": 20,
                 "Particulars": 25
             }
 
@@ -46,7 +43,7 @@ def create_journal(data, app, date_from, date_to):
     for file in list_files:
         os.remove(os.path.join(app.instance_path, "temp", file))
 
-    filename = os.path.join(app.instance_path, "temp", "petty cash journal.xlsx")
+    filename = os.path.join(app.instance_path, "temp", "payroll journal.xlsx")
 
     wb = Workbook()
 
@@ -61,9 +58,9 @@ def create_journal(data, app, date_from, date_to):
 class WriteData:
     def __init__(self, wb, data, date_from, date_to):
         ws = wb["Sheet"]
-        ws.title = "PCF"
+        ws.title = "payroll"
 
-        self.voucher_columns = ["Date", "No.", "Invoice Number", "Vendor", "Particulars"]
+        self.voucher_columns = ["Date", "No.", "Employee", "Particulars"]
 
         reformed_data = self.reform_data(data)
         row_start = row_num = self.write_headers(ws, date_from, date_to)
@@ -78,9 +75,8 @@ class WriteData:
         for voucher in data:
             _dict = {
                 "Date": voucher.record_date,
-                "No.": voucher.petty_cash_number,
-                "Invoice Number": voucher.invoice_number,
-                "Vendor": voucher.vendor.vendor_name,
+                "No.": voucher.payroll_number,
+                "Employee": voucher.employee.employee_name,
                 "Particulars": voucher.notes
             }
 
@@ -94,7 +90,7 @@ class WriteData:
 
             df_data = concat([df_data, DataFrame(_dict, index={len(df_data)+1})])
 
-        account_type = AccountType.query.filter_by(account_type="Cash and Cash Equivalents").first()
+        account_type = AccountType.query.filter_by(account_type="Expenses").first()
         preferred_accounts = [account.account_title for account in Accounts.query.filter(
                                         Accounts.account_type_id == account_type.id
                                         ).order_by(
@@ -143,7 +139,7 @@ class WriteData:
 
         row_num += 1
         cell = ws[f"A{row_num}"]
-        cell.value = "Petty Cash Journal"
+        cell.value = "Payroll Journal"
         cell.font = Font(size=10, bold=True)
 
         row_num += 1
