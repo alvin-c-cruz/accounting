@@ -14,7 +14,7 @@
     {{ form.csrf_token }}
     <div class="row">
         <div class="col-6">
-            {{ date_field(form.record_date) }}
+            {{ date_field(form.record_date, autofocus=True) }}
         </div>
         <div class="col-6">
             {{ date_field(form.report_date) }}

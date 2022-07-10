@@ -7,7 +7,7 @@
 <h1>Add Customer</h1>
 <form action="{{ url_for('customers.add') }}" method="post" class="form">
     {{ form.csrf_token }}
-    {{ string_field(form.customer_name) }}
+    {{ string_field(form.customer_name, autofocus=True) }}
     {{ string_field(form.customer_tin) }}
     {{ submit_field(form.submit) }}
 </form>

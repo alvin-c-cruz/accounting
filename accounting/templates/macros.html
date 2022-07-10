@@ -10,10 +10,14 @@
     {% endif %}
 {% endmacro %}
 
-{% macro string_field(field) %}
+{% macro string_field(field, autofocus=False) %}
     <div class="form-group mt-2 mb-2">
         {{ field.label(class="control-label") }}
+        {% if autofocus %}
+        {{ field(class="form-control", autocomplete="off", autofocus="autofocus") }}
+        {% else %}
         {{ field(class="form-control", autocomplete="off") }}
+        {% endif %}
         {{ field_errors(field) }}
     </div>
 {% endmacro %}
@@ -33,6 +37,7 @@
     <div class="form-group mt-2 mb-2">
         {{ field.label(class="control-label") }}
         {{ field(class="form-control") }}
+        {{ field_errors(field) }}
     </div>
 {% endmacro %}
 
@@ -40,6 +45,7 @@
     <div class="form-group mt-2 mb-2">
         {{ field.label(class="control-label") }}
         {{ field(class="form-select") }}
+        {{ field_errors(field) }}
     </div>
 {% endmacro %}
 
@@ -64,6 +70,7 @@
 {% macro entry_string_field(field) %}
     <div class="form-group">
         {{ field(class="form-control", style="text-align:right;", autocomplete="off") }}
+        {{ field_errors(field) }}
     </div>
 {% endmacro %}
 
@@ -74,12 +81,14 @@
         {% else %}
         {{ field(class="form-control", style="text-align:right;", autocomplete="off") }}
         {% endif %}
+        {{ field_errors(field) }}
     </div>
 {% endmacro %}
 
 {% macro entry_select_field(field) %}
     <div class="form-group">
         {{ field(class="form-select") }}
+        {{ field_errors(field) }}
     </div>
 {% endmacro %}
 
