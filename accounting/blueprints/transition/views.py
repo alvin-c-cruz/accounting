@@ -1,96 +1,15 @@
-from flask import Blueprint, redirect, url_for, flash, current_app
-from flask_login import login_user
-from werkzeug.security import generate_password_hash
-from datetime import datetime
+from flask import Blueprint, flash, current_app, send_file
+from flask_login import login_required
 import os
-import json
-from accounting import db
 
-from .. account_type import AccountType
-from .. vendors import Vendors
-from .. customers import Customers
-
-from .. accounts import Accounts
 
 bp = Blueprint('transition', __name__, url_prefix="/transition")
 
 
 @bp.route("/")
+@login_required
 def home():
-    test_user()
-    default_user()
-    reload(AccountType)
-    reload(Vendors)
-    reload(Customers)
+    filename = os.path.join(current_app.instance_path, "data.db")
+    flash("Downloaded database.")
+    return send_file('{}'.format(filename), as_attachment=True, cache_timeout=0)
 
-    reload(Accounts)
-    flash("Data reloaded.", category="success")
-    return redirect(url_for("landing_page.home"))
-
-
-def test_user():
-    name = "test"
-    email = "test@gmail.com"
-    password = "ac112557"
-    registered_on = confirmed_on = datetime.now()
-
-    from ..user import User
-    User.query.delete()
-
-    new_user = User(
-        name=name,
-        email=email,
-        password=generate_password_hash(password=password, method="pbkdf2:sha256", salt_length=16),
-        admin=False,
-        registered_on=registered_on,
-        confirmed_on=confirmed_on
-    )
-    db.session.add(new_user)
-    db.session.commit()
-
-
-def default_user():
-    name = "Alvin"
-    email = "alvinccruz12@gmail.com"
-    password = "ac112557"
-
-    from .. user import User
-
-    new_user = User(
-        name=name,
-        email=email,
-        password=generate_password_hash(password=password, method="pbkdf2:sha256", salt_length=16),
-        admin=True,
-    )
-    db.session.add(new_user)
-    db.session.commit()
-
-    login_user(new_user)
-
-
-def reload(obj):
-    obj.query.delete()
-    db.session.commit()
-
-    with current_app.app_context():
-        filename = os.path.join(current_app.instance_path, "uploads", f"{obj.__tablename__}.json")
-
-    try:
-        with open(filename, "r") as f:
-            json_data = json.load(f)
-    except FileNotFoundError:
-        json_data = []
-
-    for row in json_data:
-        new_data = obj()
-        for key, value in row.items():
-            if key == "id":
-                continue
-            if 'date' in key:
-                if value:
-                    value = datetime.strptime(value, '%Y-%m-%d %H:%M:%S.%f')
-
-            setattr(new_data, key, value)
-
-        db.session.add(new_data)
-    db.session.commit()
