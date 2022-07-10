@@ -34,12 +34,14 @@
             <div class="navbar-nav">
                 <a class="nav-link text-white" href="{{ url_for('user.logout') }}">Log Out</a>
             </div>
+                {% if current_user.admin %}
+            <div class="navbar-nav">
+                <a class="nav-link text-white" href="{{ url_for('user.register') }}">Register</a>
+            </div>
+                {% endif %}
             {% else %}
             <div class="navbar-nav">
                 <a class="nav-link text-white" href="{{ url_for('user.login') }}">Log In</a>
-            </div>
-            <div class="navbar-nav">
-                <a class="nav-link text-white" href="{{ url_for('user.register') }}">Register</a>
             </div>
             {% endif %}
         </div>

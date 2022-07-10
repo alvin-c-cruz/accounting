@@ -40,11 +40,12 @@ def add():
             validated = False
 
         if validated:
-            new_data = Vendors(
-
-            )
+            new_data = Vendors()
             new_data.vendor_name = vendor_name
-            new_data.vendor_tin = vendor_tin
+
+            if vendor_tin:
+                new_data.vendor_tin = vendor_tin
+
             new_data.user_id = current_user.id
             db.session.add(new_data)
             db.session.commit()
@@ -78,7 +79,8 @@ def edit(id):
 
         if validated:
             data_to_edit.vendor_name = vendor_name
-            data_to_edit.vendor_tin = vendor_tin
+            if vendor_tin:
+                data_to_edit.vendor_tin = vendor_tin
             data_to_edit.user_id = current_user.id
             data_to_edit.date_modified = datetime.now()
             db.session.commit()

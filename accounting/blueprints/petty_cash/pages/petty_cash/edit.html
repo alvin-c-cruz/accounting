@@ -35,13 +35,12 @@
         </tr>
     {% for entry in form.entries %}
         <tr>
-            <td>{{ entry_select_field(entry.account_id) }}</td>
-            <td>{{ entry_number_field(entry.debit) }}</td>
-            <td>{{ entry_number_field(entry.credit) }}</td>
             <td>
-                {{ entry_string_field(entry.notes) }}
+                {{ entry_select_field(entry.account_id) }}
                 {{ entry.csrf_token}}
             </td>
+            <td>{{ entry_number_field(entry.debit) }}</td>
+            <td>{{ entry_number_field(entry.credit) }}</td>
         </tr>
     {% endfor %}
     </table>

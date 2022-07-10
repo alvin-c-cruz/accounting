@@ -137,7 +137,13 @@ def edit(id):
         validate(form, id)
 
         if not form.errors:
-            data_to_edit.data(form)
+            data_to_edit.record_date = form.record_date.data
+            data_to_edit.report_date = form.report_date.data
+            data_to_edit.petty_cash_number = form.petty_cash_number.data
+            data_to_edit.invoice_number = form.invoice_number.data
+            data_to_edit.notes=form.notes.data
+            data_to_edit.vendor_id=form.vendor_id.data
+
             data_to_edit.user_id = current_user.id
             data_to_edit.date_modified = datetime.utcnow()
 
