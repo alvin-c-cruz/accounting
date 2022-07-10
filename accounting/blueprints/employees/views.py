@@ -66,7 +66,7 @@ def edit(id):
         if employee_name == "":
             form.employee_name.errors.append("Please type employee name.")
             validated = False
-        elif Employees.query.filter(Employees.vendor_name == employee_name, Employees.id != data_to_edit.id).first():
+        elif Employees.query.filter(Employees.employee_name == employee_name, Employees.id != data_to_edit.id).first():
             form.employee_name.errors.append("Employee name is already used.")
             validated = False
 
