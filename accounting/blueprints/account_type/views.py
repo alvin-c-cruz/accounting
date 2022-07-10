@@ -43,7 +43,7 @@ def add():
             db.session.add(new_data)
             db.session.commit()
             flash(f"Added {new_data}", category="success")
-            return redirect(url_for("account_type.home", page=1))
+            return redirect(url_for("account_type.add"))
     return render_template("account_type/add.html", form=form)
 
 

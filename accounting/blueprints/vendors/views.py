@@ -49,7 +49,7 @@ def add():
             db.session.add(new_data)
             db.session.commit()
             flash(f"Added {new_data}", category="success")
-            return redirect(url_for("vendors.home", page=1))
+            return redirect(url_for("vendors.add"))
 
     return render_template("vendors/add.html", form=form)
 

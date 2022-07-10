@@ -81,7 +81,7 @@ def edit(id):
             data_to_edit.date_modified = datetime.now()
             db.session.commit()
             flash(f"Edited {data_to_edit}", category="success")
-            return redirect(url_for("customers.home", page=1))
+            return redirect(url_for("customers.add"))
     return render_template("customers/edit.html", form=form, id=id)
 
 

@@ -49,7 +49,7 @@ def add():
             db.session.add(new_data)
             db.session.commit()
             flash(f"Added {new_data}", category="success")
-            return redirect(url_for('accounts.home', page=1))
+            return redirect(url_for('accounts.add'))
     else:
         last_entry = Accounts.query.order_by(-Accounts.id).first()
         if last_entry:
