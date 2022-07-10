@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% from "macros.html" import add_btn, edit_btn, delete_btn, render_pagination %}
+
+{% block title %}Vendors{% endblock %}
+
+{% block content %}
+<h1>Vendors</h1>
+{{ add_btn('vendors.add', "Add Vendor") }}
+{% if current_user.admin %}
+    {{ add_btn('vendors.export', "Export") }}
+{% endif %}
+<table class="table table-striped table-dark">
+    <tr>
+        {% for column in columns %}
+        <th>{{ column['label']  }}</th>
+        {% endfor %}
+        <th>Balance</th>
+        <th>Actions</th>
+    </tr>
+    {% if not data %}
+    <tr>
+        <td colspan="4" class="text-center">No record found.</td>
+    </tr>
+    {% else %}
+        {% for row in data.items %}
+    <tr>
+        {% for column in columns %}
+        <td>{{ row[column['key']]  }}</td>
+        {% endfor %}
+        <td>{{ "{:,.2f}".format(row.balance()|float) }}</td>
+        <td>
+            {{ edit_btn('vendors.edit', row.id) }}
+            {{ delete_btn('vendors.delete', row.id) }}
+        </td>
+    </tr>
+        {% endfor %}
+    {% endif %}
+</table>
+{{ render_pagination(data, 'vendors.home') }}
+{% endblock %}

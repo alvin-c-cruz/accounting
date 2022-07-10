@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% from "macros.html" import string_field, select_field, date_field, textarea_field, entry_string_field, entry_number_field, entry_select_field, submit_field, delete_btn %}
+
+{% block title %}Add Payroll{% endblock %}
+
+{% block content %}
+<h1>Add Payroll</h1>
+{% for field, errors in form.errors.items() %}
+<div class="alert alert-error">
+    {{ form[field].label }}: {{ errors }}
+</div>
+{% endfor %}
+<form action="{{ url_for('payroll.add') }}" method="post" class="form">
+    {{ form.csrf_token }}
+    <div class="row">
+        <div class="col-6">
+            {{ date_field(form.record_date, autofocus=True) }}
+        </div>
+        <div class="col-6">
+            {{ string_field(form.payroll_number) }}
+        </div>
+    </div>
+    {{ select_field(form.employee_id) }}
+    {{ textarea_field(form.notes) }}
+
+    <table class="table table-striped">
+        <tr>
+            <th>Account Title</th>
+            <th>Debit</th>
+            <th>Credit</th>
+        </tr>
+    {% for entry in form.entries %}
+        <tr>
+            <td>
+                {{ entry_select_field(entry.account_id) }}
+                {{ entry.csrf_token}}
+            </td>
+            <td>{{ entry_number_field(entry.debit) }}</td>
+            <td>{{ entry_number_field(entry.credit) }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+
+    {{ submit_field(form.submit) }}
+</form>
+{% endblock %}

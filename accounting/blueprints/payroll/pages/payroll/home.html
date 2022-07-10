@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% from "macros.html" import date_field, add_btn, edit_btn, delete_btn, submit_field, render_pagination %}
+
+{% block title %}Petty Cash{% endblock %}
+
+{% block content %}
+<h1>Petty Cash</h1>
+<div class="row">
+    <div class="col">
+        <form class="form" method="post" action="{{ url_for('petty_cash.home', page=1) }}">
+            {{ journal_form.csrf_token }}
+            {{ journal_form.date_from.label }}
+            {{ journal_form.date_from }}
+
+            {{ journal_form.date_to.label }}
+            {{ journal_form.date_to }}
+
+            {{ journal_form.submit(class_="btn btn-success") }}
+        </form>
+
+    </div>
+    <div class="col text-end">
+        {{ add_btn("petty_cash.add", "Add Petty Cash") }}
+    </div>
+</div>
+
+<table class="table table-striped table-dark">
+    <tr>
+        <th>Record Date</th>
+        <th>Report Date</th>
+        <th>PCF Number</th>
+        <th>Invoice Number</th>
+        <th>Vendor</th>
+        <th>Amount</th>
+        <th>Actions</th>
+    </tr>
+    {% if not data %}
+    <tr>
+        <td colspan="4" class="text-center">No record found.</td>
+    </tr>
+    {% else %}
+        {% for row in data.items %}
+    <tr>
+        <td>
+            {{ row.record_date.strftime('%Y %b %d')  }}
+        </td>
+        <td>
+            {% if row.report_date %}
+            {{ row.report_date.strftime('%Y %b %d')  }}
+            {% endif %}
+        </td>
+        <td>{{ row.petty_cash_number  }}</td>
+        <td>{{ row.invoice_number }}</td>
+        <td>{{ row.vendor.vendor_name }}</td>
+        <td>
+            {{ row.cash_total() }}
+        </td>
+        <td>
+            {{ edit_btn("petty_cash.edit", row.id) }}
+            {{ delete_btn("petty_cash.delete", row.id) }}
+        </td>
+    </tr>
+        {% endfor %}
+    {% endif %}
+</table>
+{{ render_pagination(data, "petty_cash.home") }}
+{% endblock %}

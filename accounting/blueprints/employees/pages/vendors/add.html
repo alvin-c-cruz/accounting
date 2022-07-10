@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% from "macros.html" import string_field, select_field, submit_field, add_btn %}
+
+{% block title %}Add Vendors{% endblock %}
+
+{% block content %}
+<h1>Add Vendor</h1>
+<form action="{{ url_for('vendors.add') }}" method="post" class="form">
+    {{ form.csrf_token }}
+    {{ string_field(form.vendor_name, autofocus=True) }}
+    {{ string_field(form.vendor_tin) }}
+    {{ submit_field(form.submit) }}
+</form>
+{% endblock %}
